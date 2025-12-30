@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Ball Tales - Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 30px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #000;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        .dashboard-main {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sheets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .sheet-card {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sheet-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .sheet-card.new-sheet {
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            color: var(--text-secondary);
+        }
+
+        .sheet-card.new-sheet:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .sheet-card.new-sheet .plus-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .sheet-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--ssj-gold);
+            margin-bottom: 8px;
+        }
+
+        .sheet-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .sheet-pdl {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--ki-green);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .sheet-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .sheet-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+
+        /* Customization Panel */
+        .customization-panel {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .color-picker-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .color-picker-item label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: none;
+        }
+
+        .color-input-wrapper input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            font-family: monospace;
+        }
+
+        .font-size-slider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .font-size-slider input[type="range"] {
+            flex: 1;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            -webkit-appearance: none;
+        }
+
+        .font-size-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .bg-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .bg-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 0, 0.05);
+        }
+
+        .bg-preview {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        /* New Sheet Modal */
+        .system-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .system-option {
+            padding: 25px 15px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .system-option:hover {
+            border-color: var(--primary);
+        }
+
+        .system-option.selected {
+            border-color: var(--ssj-gold);
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .system-option .system-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--ssj-gold);
+            margin-bottom: 5px;
+        }
+
+        .system-option .system-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .dashboard-main {
+                padding: 15px;
+            }
+
+            .sheets-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="navbar-brand">
+            <img src="https://media.discordapp.net/attachments/1372692677895651453/1455631979692429425/Tales.png?ex=69556e6c&is=69541cec&hm=d7b042afcf6e2e6626d8484c698721bf25f70bd189fe964c4cfc6db4c20ac5c2&=&format=webp&quality=lossless&width=1404&height=673"
+                alt="Dragon Ball Tales" style="height: 50px; filter: drop-shadow(0 0 5px rgba(255, 107, 0, 0.5));">
+        </div>
+
+        <div class="navbar-menu">
+            <a href="/dashboard" class="navbar-link active">📋 Minhas Fichas</a>
+            <a href="#" class="navbar-link" onclick="toggleCustomization()">🎨 Personalizar</a>
+            <a href="#" class="navbar-link admin-only hidden" id="adminLink">⚙️ Admin</a>
+        </div>
+
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div>
+                <div class="user-name" id="userName">Carregando...</div>
+                <div class="user-role" id="userRole">Guerreiro Z</div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="logout()">Sair</button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Customization Panel (Hidden by default) -->
+        <div class="customization-panel hidden" id="customizationPanel">
+            <h2 class="section-title">🎨 Personalização Visual</h2>
+
+            <div class="color-picker-group">
+                <div class="color-picker-item">
+                    <label>Cor da Fonte</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="fontColor" value="#f0f0f5">
+                        <input type="text" id="fontColorText" value="#f0f0f5" maxlength="7">
+                    </div>
+                </div>
+
+                <div class="color-picker-item">
+                    <label>Cor das Bordas</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="borderColor" value="#ff6b00">
+                        <input type="text" id="borderColorText" value="#ff6b00" maxlength="7">
+                    </div>
+                </div>
+
+                <div class="color-picker-item">
+                    <label>Cor de Fundo</label>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="bgColor" value="#050508">
+                        <input type="text" id="bgColorText" value="#050508" maxlength="7">
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <label style="color: var(--text-secondary); font-size: 0.85rem;">Tamanho da Fonte</label>
+                <div class="font-size-slider">
+                    <span>12px</span>
+                    <input type="range" id="fontSize" min="12" max="24" value="16">
+                    <span>24px</span>
+                    <span id="fontSizeValue"
+                        style="font-family: 'Orbitron'; color: var(--primary); min-width: 45px;">16px</span>
+                </div>
+            </div>
+
+            <div class="bg-upload-area" onclick="document.getElementById('bgUpload').click()">
+                <input type="file" id="bgUpload" accept="image/*" style="display: none;"
+                    onchange="uploadBackground(event)">
+                <div style="font-size: 2rem; margin-bottom: 10px;">📷</div>
+                <div>Clique para fazer upload de uma imagem de fundo</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Máximo: 10MB | Formatos:
+                    JPG, PNG, GIF, WebP</div>
+                <img id="bgPreview" class="bg-preview hidden" alt="Preview">
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn btn-primary" onclick="savePreferences()">💾 Salvar Preferências</button>
+                <button class="btn btn-secondary" onclick="resetPreferences()">🔄 Restaurar Padrões</button>
+                <button class="btn" onclick="removeBackground()">🗑️ Remover Fundo</button>
+            </div>
+        </div>
+
+        <!-- Sheets Section -->
+        <h2 class="section-title">📋 Minhas Fichas</h2>
+
+        <div class="sheets-grid" id="sheetsGrid">
+            <div class="sheet-card new-sheet" onclick="openNewSheetModal()">
+                <div class="plus-icon">+</div>
+                <div>Criar Nova Ficha</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- New Sheet Modal -->
+    <div class="modal" id="newSheetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📜 Nova Ficha</h2>
+                <button class="modal-close" onclick="closeNewSheetModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label>Nome do Personagem</label>
+                <input type="text" id="newSheetName" placeholder="Ex: Goku, Vegeta, etc." maxlength="50">
+            </div>
+
+            <label
+                style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 10px; display: block;">Selecione
+                o Sistema</label>
+            <div class="system-selector">
+                <div class="system-option selected" data-system="RR" onclick="selectSystem(this)">
+                    <div class="system-name">RR</div>
+                    <div class="system-desc">Dragon Ball Tales</div>
+                </div>
+                <!-- More systems can be added here in the future -->
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width: 100%; margin-top: 20px;" onclick="createSheet()">
+                ⚡ Criar Ficha
+            </button>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--danger);">⚠️ Confirmar Exclusão</h2>
+                <button class="modal-close" onclick="closeDeleteModal()">×</button>
+            </div>
+            <p style="margin-bottom: 20px;">Tem certeza que deseja deletar a ficha "<span id="deleteSheetName"></span>"?
+            </p>
+            <p style="color: var(--danger); font-size: 0.9rem; margin-bottom: 20px;">Esta ação não pode ser desfeita!
+            </p>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-danger" style="flex: 1;" onclick="confirmDelete()">🗑️ Deletar</button>
+                <button class="btn" style="flex: 1;" onclick="closeDeleteModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '';
+        let currentUser = null;
+        let sheets = [];
+        let sheetToDelete = null;
+
+        // Check authentication
+        async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/auth/verify`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await res.json();
+
+                if (!data.valid) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/';
+                    return;
+                }
+
+                currentUser = data.user;
+                updateUserDisplay();
+                loadPreferences();
+                loadSheets();
+
+                // Show admin link if admin
+                if (currentUser.isAdmin) {
+                    document.getElementById('adminLink').classList.remove('hidden');
+                    document.getElementById('adminLink').href = '/admin';
+                }
+
+            } catch (e) {
+                console.error('Auth check failed:', e);
+                window.location.href = '/';
+            }
+        }
+
+        function updateUserDisplay() {
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userRole').textContent = currentUser.isAdmin ? '👑 Administrador' : '⚔️ Guerreiro Z';
+            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+        }
+
+        async function loadPreferences() {
+            try {
+                const res = await fetch(`${API_URL}/api/user/preferences`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+
+                if (res.ok) {
+                    const prefs = await res.json();
+                    applyPreferences(prefs);
+
+                    // Update UI controls
+                    document.getElementById('fontColor').value = prefs.fontColor || '#f0f0f5';
+                    document.getElementById('fontColorText').value = prefs.fontColor || '#f0f0f5';
+                    document.getElementById('borderColor').value = prefs.borderColor || '#ff6b00';
+                    document.getElementById('borderColorText').value = prefs.borderColor || '#ff6b00';
+                    document.getElementById('bgColor').value = prefs.backgroundColor || '#050508';
+                    document.getElementById('bgColorText').value = prefs.backgroundColor || '#050508';
+                    document.getElementById('fontSize').value = prefs.fontSize || 16;
+                    document.getElementById('fontSizeValue').textContent = (prefs.fontSize || 16) + 'px';
+
+                    if (prefs.backgroundImage) {
+                        document.getElementById('bgPreview').src = prefs.backgroundImage;
+                        document.getElementById('bgPreview').classList.remove('hidden');
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load preferences:', e);
+            }
+        }
+
+        function applyPreferences(prefs) {
+            document.documentElement.style.setProperty('--user-text-color', prefs.fontColor);
+            document.documentElement.style.setProperty('--user-border-color', prefs.borderColor);
+            document.documentElement.style.setProperty('--user-bg-color', prefs.backgroundColor);
+            document.documentElement.style.setProperty('--user-font-size', prefs.fontSize + 'px');
+
+            if (prefs.backgroundImage) {
+                document.body.style.backgroundImage = `url(${prefs.backgroundImage})`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+        }
+
+        async function loadSheets() {
+            try {
+                const res = await fetch(`${API_URL}/api/sheets`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+
+                if (res.ok) {
+                    sheets = await res.json();
+                    renderSheets();
+                }
+            } catch (e) {
+                console.error('Failed to load sheets:', e);
+            }
+        }
+
+        function renderSheets() {
+            const grid = document.getElementById('sheetsGrid');
+            grid.innerHTML = `
+                <div class="sheet-card new-sheet" onclick="openNewSheetModal()">
+                    <div class="plus-icon">+</div>
+                    <div>Criar Nova Ficha</div>
+                </div>
+            `;
+
+            sheets.forEach(sheet => {
+                const card = document.createElement('div');
+                card.className = 'sheet-card';
+                card.innerHTML = `
+                    <div class="sheet-name">${sheet.name}</div>
+                    <div class="sheet-meta">
+                        <span>📋 ${sheet.system}</span>
+                        <span>🕒 ${formatDate(sheet.updatedAt)}</span>
+                    </div>
+                    <div class="sheet-pdl">PDL: ${formatNumber(sheet.pdl || 0)}</div>
+                    <div class="sheet-actions">
+                        <button class="btn btn-primary btn-sm" onclick="openSheet('${sheet.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSheet('${sheet.id}', '${sheet.name}')">🗑️</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString('pt-BR');
+        }
+
+        function openSheet(id) {
+            window.location.href = `/ficha/${id}`;
+        }
+
+        // New Sheet Modal
+        function openNewSheetModal() {
+            document.getElementById('newSheetModal').classList.add('active');
+            document.getElementById('newSheetName').value = '';
+        }
+
+        function closeNewSheetModal() {
+            document.getElementById('newSheetModal').classList.remove('active');
+        }
+
+        function selectSystem(element) {
+            document.querySelectorAll('.system-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        async function createSheet() {
+            const name = document.getElementById('newSheetName').value.trim() || 'Novo Personagem';
+            const system = document.querySelector('.system-option.selected')?.dataset.system || 'RR';
+
+            try {
+                const res = await fetch(`${API_URL}/api/sheets`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({ name, system })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    closeNewSheetModal();
+                    window.location.href = `/ficha/${data.sheet.id}`;
+                } else {
+                    const error = await res.json();
+                    alert(error.error || 'Erro ao criar ficha');
+                }
+            } catch (e) {
+                console.error('Failed to create sheet:', e);
+                alert('Erro ao criar ficha');
+            }
+        }
+
+        // Delete Sheet
+        function deleteSheet(id, name) {
+            sheetToDelete = id;
+            document.getElementById('deleteSheetName').textContent = name;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            sheetToDelete = null;
+        }
+
+        async function confirmDelete() {
+            if (!sheetToDelete) return;
+
+            try {
+                const res = await fetch(`${API_URL}/api/sheets/${sheetToDelete}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+
+                if (res.ok) {
+                    closeDeleteModal();
+                    loadSheets();
+                } else {
+                    alert('Erro ao deletar ficha');
+                }
+            } catch (e) {
+                console.error('Failed to delete sheet:', e);
+                alert('Erro ao deletar ficha');
+            }
+        }
+
+        // Customization
+        function toggleCustomization() {
+            document.getElementById('customizationPanel').classList.toggle('hidden');
+        }
+
+        // Color input sync
+        document.querySelectorAll('input[type="color"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const textInput = document.getElementById(e.target.id + 'Text');
+                if (textInput) textInput.value = e.target.value;
+            });
+        });
+
+        document.querySelectorAll('.color-input-wrapper input[type="text"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const colorInput = document.getElementById(e.target.id.replace('Text', ''));
+                if (colorInput && /^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+                    colorInput.value = e.target.value;
+                }
+            });
+        });
+
+        document.getElementById('fontSize').addEventListener('input', (e) => {
+            document.getElementById('fontSizeValue').textContent = e.target.value + 'px';
+        });
+
+        async function savePreferences() {
+            try {
+                const res = await fetch(`${API_URL}/api/user/preferences`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({
+                        fontSize: parseInt(document.getElementById('fontSize').value),
+                        fontColor: document.getElementById('fontColor').value,
+                        borderColor: document.getElementById('borderColor').value,
+                        backgroundColor: document.getElementById('bgColor').value
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    applyPreferences(data.preferences);
+                    alert('✅ Preferências salvas!');
+                } else {
+                    alert('Erro ao salvar preferências');
+                }
+            } catch (e) {
+                console.error('Failed to save preferences:', e);
+                alert('Erro ao salvar preferências');
+            }
+        }
+
+        async function uploadBackground(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('⚠️ Imagem muito grande! Máximo: 10MB');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('background', file);
+
+            try {
+                const res = await fetch(`${API_URL}/api/user/background`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('bgPreview').src = data.backgroundImage;
+                    document.getElementById('bgPreview').classList.remove('hidden');
+                    document.body.style.backgroundImage = `url(${data.backgroundImage})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    alert('✅ Imagem de fundo atualizada!');
+                } else {
+                    alert('Erro ao fazer upload');
+                }
+            } catch (e) {
+                console.error('Upload failed:', e);
+                alert('Erro ao fazer upload');
+            }
+        }
+
+        async function removeBackground() {
+            try {
+                const res = await fetch(`${API_URL}/api/user/background`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+
+                if (res.ok) {
+                    document.getElementById('bgPreview').src = '';
+                    document.getElementById('bgPreview').classList.add('hidden');
+                    document.body.style.backgroundImage = '';
+                    alert('✅ Imagem de fundo removida!');
+                }
+            } catch (e) {
+                console.error('Remove failed:', e);
+            }
+        }
+
+        function resetPreferences() {
+            document.getElementById('fontColor').value = '#f0f0f5';
+            document.getElementById('fontColorText').value = '#f0f0f5';
+            document.getElementById('borderColor').value = '#ff6b00';
+            document.getElementById('borderColorText').value = '#ff6b00';
+            document.getElementById('bgColor').value = '#050508';
+            document.getElementById('bgColorText').value = '#050508';
+            document.getElementById('fontSize').value = 16;
+            document.getElementById('fontSizeValue').textContent = '16px';
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Ball Tales - Ficha</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Sheet-specific styles */
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 25px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .sheet-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sheet-main {
+            padding: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .save-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .save-indicator.saving {
+            color: var(--warning);
+        }
+
+        .save-indicator.saved {
+            color: var(--success);
+        }
+
+        /* Roll History Panel */
+        .roll-history-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 350px;
+            background: var(--bg-dark);
+            border-left: 2px solid var(--border-color);
+            padding: 20px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .roll-history-panel.open {
+            transform: translateX(0);
+        }
+
+        .roll-history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .roll-history-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--ssj-gold);
+        }
+
+        .roll-history-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .roll-entry {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .roll-entry:hover {
+            border-color: var(--primary);
+        }
+
+        .roll-entry.critical {
+            border-color: var(--ki-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .roll-entry.fumble {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .roll-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .roll-entry-name {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .roll-entry-result {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .roll-entry-details {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .roll-toggle-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: #000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
+            transition: all 0.3s;
+            z-index: 99;
+        }
+
+        .roll-toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .roll-toggle-btn .count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 24px;
+            height: 24px;
+            background: var(--danger);
+            border-radius: 50%;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* 3D Dice Modal */
+        .dice-3d-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .dice-3d-modal.active {
+            display: flex;
+        }
+
+        .dice-3d-content {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .dice-3d-container {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 20px;
+        }
+
+        .dice-result-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--ssj-gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dice-result-display.show {
+            opacity: 1;
+        }
+
+        .dice-result-display.critical {
+            color: var(--ki-green);
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+
+        .dice-result-display.fumble {
+            color: var(--danger);
+            text-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+        }
+
+        .dice-roll-info {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .dice-roll-formula {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .dice-roll-total {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+
+        /* Debug panel adjustments for roll history */
+        .debug-section {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .roll-history-panel {
+                width: 100%;
+            }
+
+            .sheet-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="sheet-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="/dashboard" class="btn btn-sm">← Voltar</a>
+            <span id="sheetName" style="font-family: 'Orbitron'; color: var(--ssj-gold);">Carregando...</span>
+        </div>
+
+        <div class="save-indicator" id="saveIndicator">
+            <span>💾</span>
+            <span id="saveStatus">Salvo</span>
+        </div>
+
+        <div class="sheet-nav">
+            <button class="btn btn-sm btn-secondary" onclick="exportSheet()">📥 Exportar</button>
+            <button class="btn btn-sm" onclick="toggleRollHistory()">🎲 Histórico</button>
+        </div>
+    </header>
+
+    <!-- Main Sheet Content -->
+    <main class="sheet-main" id="sheetContent">
+        <!-- Character sheet content will be loaded here -->
+        <div style="text-align: center; padding: 50px;">
+            <div class="loading-spinner"
+                style="width: 40px; height: 40px; margin: 0 auto 20px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;">
+            </div>
+            <p>Carregando ficha...</p>
+        </div>
+    </main>
+
+    <!-- Roll History Panel -->
+    <div class="roll-history-panel" id="rollHistoryPanel">
+        <div class="roll-history-header">
+            <h2 class="roll-history-title">🎲 Histórico de Rolagens</h2>
+            <button class="btn btn-sm" onclick="toggleRollHistory()">✕</button>
+        </div>
+
+        <div class="debug-section">
+            <div class="debug-title">
+                <span>🔧</span> Debug - Sessão Atual
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                Histórico mantido apenas durante a sessão. Será arquivado após logout (recuperável pelo admin em até 3
+                dias).
+            </p>
+        </div>
+
+        <div class="roll-history-list" id="rollHistoryList">
+            <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                Nenhuma rolagem ainda
+            </p>
+        </div>
+
+        <button class="btn btn-danger btn-sm" style="margin-top: 15px;" onclick="clearRollHistory()">
+            🗑️ Limpar Histórico
+        </button>
+    </div>
+
+    <!-- Roll Toggle Button -->
+    <button class="roll-toggle-btn" onclick="toggleRollHistory()">
+        🎲
+        <span class="count hidden" id="rollCount">0</span>
+    </button>
+
+    <!-- 3D Dice Modal -->
+    <div class="dice-3d-modal" id="dice3dModal">
+        <div class="dice-3d-content">
+            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;" id="diceModalTitle">
+                Rolando...
+            </h2>
+
+            <div class="dice-3d-container" id="dice3dContainer"></div>
+
+            <div class="dice-result-display" id="diceResultDisplay">20</div>
+
+            <div class="dice-roll-info" id="diceRollInfo" style="display: none;">
+                <div class="dice-roll-formula" id="diceFormula"></div>
+                <div class="dice-roll-total" id="diceTotal"></div>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-primary" id="confirmRollBtn" style="display: none;" onclick="confirmRoll()">
+                    ✓ Confirmar
+                </button>
+                <button class="btn" onclick="closeDiceModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/dice3d.js"></script>
+    <script>
+        const API_URL = '';
+        let sheetId = null;
+        let sheetData = null;
+        let dice3d = null;
+        let rollHistory = null;
+        let saveTimeout = null;
+        let currentRollData = null;
+
+        // Get sheet ID from URL
+        function getSheetId() {
+            const path = window.location.pathname;
+            const match = path.match(/\/ficha\/([^\/]+)/);
+            return match ? match[1] : null;
+        }
+
+        // Check auth and load sheet
+        async function init() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = '/';
+                return;
+            }
+
+            sheetId = getSheetId();
+            if (!sheetId) {
+                alert('ID da ficha não encontrado');
+                window.location.href = '/dashboard';
+                return;
+            }
+
+            // Initialize roll history
+            rollHistory = new RollHistory();
+            rollHistory.load();
+
+            // Load user preferences
+            await loadPreferences();
+
+            // Load sheet data
+            await loadSheet();
+
+            // Initialize 3D dice
+            const container = document.getElementById('dice3dContainer');
+            if (container) {
+                dice3d = new Dice3D(container);
+            }
+
+            updateRollHistoryDisplay();
+        }
+
+        async function loadPreferences() {
+            try {
+                const res = await fetch(`${API_URL}/api/user/preferences`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+
+                if (res.ok) {
+                    const prefs = await res.json();
+                    applyPreferences(prefs);
+                }
+            } catch (e) {
+                console.error('Failed to load preferences:', e);
+            }
+        }
+
+        function applyPreferences(prefs) {
+            if (prefs.fontColor) document.documentElement.style.setProperty('--text-primary', prefs.fontColor);
+            if (prefs.borderColor) document.documentElement.style.setProperty('--primary', prefs.borderColor);
+            if (prefs.backgroundColor) document.documentElement.style.setProperty('--bg-dark', prefs.backgroundColor);
+            if (prefs.fontSize) document.body.style.fontSize = prefs.fontSize + 'px';
+
+            if (prefs.backgroundImage) {
+                document.body.style.backgroundImage = `url(${prefs.backgroundImage})`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+        }
+
+        async function loadSheet() {
+            try {
+                const res = await fetch(`${API_URL}/api/sheets/${sheetId}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+
+                if (!res.ok) {
+                    throw new Error('Ficha não encontrada');
+                }
+
+                sheetData = await res.json();
+                document.getElementById('sheetName').textContent = sheetData.charName || 'Sem Nome';
+
+                // Render the sheet
+                renderSheet();
+
+            } catch (e) {
+                console.error('Failed to load sheet:', e);
+                alert('Erro ao carregar ficha');
+                window.location.href = '/dashboard';
+            }
+        }
+
+        function renderSheet() {
+            // Build the sheet HTML from the original template
+            const content = document.getElementById('sheetContent');
+            content.innerHTML = buildSheetHTML();
+
+            // Load values from sheetData
+            loadSheetValues();
+
+            // Add event listeners for auto-save
+            content.querySelectorAll('input, select, textarea').forEach(el => {
+                el.addEventListener('change', scheduleAutoSave);
+                el.addEventListener('input', scheduleAutoSave);
+            });
+
+            // Initialize calculations
+            updateAllCalculations();
+        }
+
+        function buildSheetHTML() {
+            // Simplified sheet structure - main sections
+            return `
+                <!-- Logo -->
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <img src="https://media.discordapp.net/attachments/1372692677895651453/1455631979692429425/Tales.png?ex=69556e6c&is=69541cec&hm=d7b042afcf6e2e6626d8484c698721bf25f70bd189fe964c4cfc6db4c20ac5c2&=&format=webp&quality=lossless&width=1404&height=673" 
+                         alt="Dragon Ball Tales" 
+                         style="max-width: 350px; filter: drop-shadow(0 0 5px orange);">
+                </div>
+                
+                <!-- Character Info -->
+                <div class="card" style="margin-bottom: 25px;">
+                    <div style="display: flex; gap: 25px; flex-wrap: wrap; align-items: flex-start;">
+                        <div class="character-image-container" style="flex-shrink: 0;">
+                            <div id="charImageContainer" 
+                                 style="width: 250px; height: 300px; border: 3px solid var(--primary); border-radius: 16px; overflow: hidden; cursor: pointer; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;"
+                                 onclick="toggleImageEdit()">
+                                <img id="charImageDisplay" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                <span id="charImagePlaceholder" style="color: var(--text-secondary);">📷 Clique para adicionar</span>
+                            </div>
+                            <div id="imageEditBox" style="display: none; margin-top: 10px;">
+                                <input type="url" id="charImageUrl" placeholder="URL da imagem..." 
+                                       style="width: 100%; margin-bottom: 8px;">
+                                <button class="btn btn-sm btn-primary" style="width: 100%;" onclick="updateCharImage()">Atualizar</button>
+                            </div>
+                        </div>
+                        
+                        <div style="flex: 1; min-width: 250px;">
+                            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                                <div class="form-group">
+                                    <label>Personagem</label>
+                                    <input type="text" id="charName" placeholder="Nome do Personagem">
+                                </div>
+                                <div class="form-group">
+                                    <label>Jogador</label>
+                                    <input type="text" id="playerName" placeholder="Seu nome">
+                                </div>
+                                <div class="form-group">
+                                    <label>Raça</label>
+                                    <input type="text" id="charRace" placeholder="Ex: Terráqueo, Saiyajin">
+                                </div>
+                                <div class="form-group">
+                                    <label>PV por 10K PDL</label>
+                                    <input type="number" id="customRaceHP" value="6" min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label>Características Raciais</label>
+                                <textarea id="racialTraits" placeholder="Descreva os bônus e habilidades da sua raça..."
+                                          style="min-height: 80px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PDL Scouter -->
+                <div class="card" style="margin-bottom: 25px; border-color: var(--ki-green); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                    <div style="font-family: 'Orbitron'; color: var(--ki-green);">
+                        <div style="font-size: 1rem; letter-spacing: 2px;">SCANNING TARGET...</div>
+                        <div style="font-size: 0.7rem; opacity: 0.7;">ANALYSING POWER LEVELS</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--ki-green); font-family: 'Orbitron'; margin-bottom: 5px;">PODER DE LUTA</div>
+                        <input type="number" id="pdl" value="0" min="0" 
+                               style="width: 200px; font-size: 2.5rem; font-family: 'Orbitron'; font-weight: 900; 
+                                      color: var(--ki-green); background: transparent; border: none; text-align: center;
+                                      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);">
+                    </div>
+                </div>
+                
+                <!-- Evolution Tracker -->
+                <div class="card" style="margin-bottom: 25px;">
+                    <h2 class="card-title">📈 Evolução por PDL</h2>
+                    <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Bônus PV (10k)</div>
+                            <div id="evoHP" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">0</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Bônus PK (10k)</div>
+                            <div id="evoPK" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">0</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Talentos (20k)</div>
+                            <div id="evoTalents" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">3</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Atributos (30k)</div>
+                            <div id="evoAttr" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Attributes -->
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 25px;">
+                    <!-- Primary Attributes -->
+                    <div class="card">
+                        <h2 class="card-title">💪 Atributos Primários</h2>
+                        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px;">
+                            ${['FOR', 'DES', 'CON', 'INT', 'SAB', 'POD', 'PRE'].map(attr => `
+                                <div class="attr-box" onclick="rollAttribute('${attr.toLowerCase()}', '${attr}')" 
+                                     style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s;">
+                                    <div style="font-family: 'Orbitron'; font-size: 0.85rem; color: var(--primary); margin-bottom: 8px;">${attr}</div>
+                                    <input type="number" id="${attr.toLowerCase()}" value="8" min="1" max="30" 
+                                           onclick="event.stopPropagation()"
+                                           style="width: 55px; font-size: 1.3rem; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-family: 'Orbitron';">
+                                    <div id="${attr.toLowerCase()}Mod" style="font-family: 'Orbitron'; font-weight: 900; color: #000; background: var(--primary); padding: 4px 12px; border-radius: 6px; margin-top: 8px; display: inline-block;">-1</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Secondary Attributes -->
+                    <div class="card">
+                        <h2 class="card-title">⚔️ Atributos Secundários</h2>
+                        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Pontos de Vida</div>
+                                <div id="pv" style="font-family: 'Orbitron'; font-size: 1.8rem; color: #fff;">40</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Pontos de Ki</div>
+                                <div id="pk" style="font-family: 'Orbitron'; font-size: 1.8rem; color: #fff;">16</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; text-align: center;">
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Classe de Armadura</div>
+                                <div id="ca" style="font-family: 'Orbitron'; font-size: 1.8rem; color: #fff;">10</div>
+                            </div>
+                        </div>
+                        
+                        <!-- HP/PK Bars -->
+                        <div style="margin-top: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: #e74c3c;">❤️ HP</span>
+                                    <span><input type="number" id="currentHP" value="40" min="0" style="width: 50px; text-align: center;"> / <span id="maxHP">40</span></span>
+                                </div>
+                                <div style="height: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden;">
+                                    <div id="hpBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, #c0392b, #e74c3c); transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: #3498db;">⚡ KI</span>
+                                    <span><input type="number" id="currentPK" value="16" min="0" style="width: 50px; text-align: center;"> / <span id="maxPK">16</span></span>
+                                </div>
+                                <div style="height: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden;">
+                                    <div id="pkBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, #2980b9, #3498db); transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-success" style="margin-top: 10px;" onclick="fullRestore()">🔄 Restaurar Tudo</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notes -->
+                <div class="card">
+                    <h2 class="card-title">📝 Anotações</h2>
+                    <div id="notesEditor" contenteditable="true" 
+                         style="min-height: 150px; padding: 15px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);"
+                         oninput="scheduleAutoSave()"></div>
+                </div>
+            `;
+        }
+
+        function loadSheetValues() {
+            if (!sheetData) return;
+
+            // Basic info
+            document.getElementById('charName').value = sheetData.charName || '';
+            document.getElementById('playerName').value = sheetData.playerName || '';
+            document.getElementById('charRace').value = sheetData.charRace || '';
+            document.getElementById('customRaceHP').value = sheetData.customRaceHP || 6;
+            document.getElementById('racialTraits').value = sheetData.racialTraits || '';
+            document.getElementById('pdl').value = sheetData.pdl || 0;
+
+            // Attributes
+            document.getElementById('for').value = sheetData.for || 8;
+            document.getElementById('des').value = sheetData.des || 8;
+            document.getElementById('con').value = sheetData.con || 8;
+            document.getElementById('int').value = sheetData.int || 8;
+            document.getElementById('sab').value = sheetData.sab || 8;
+            document.getElementById('pod').value = sheetData.pod || 8;
+            document.getElementById('pre').value = sheetData.pre || 8;
+
+            // Current HP/PK
+            document.getElementById('currentHP').value = sheetData.currentHP || 40;
+            document.getElementById('currentPK').value = sheetData.currentPK || 16;
+
+            // Notes
+            document.getElementById('notesEditor').innerHTML = sheetData.notes || '';
+
+            // Image
+            if (sheetData.charImageUrl) {
+                document.getElementById('charImageUrl').value = sheetData.charImageUrl;
+                updateCharImage();
+            }
+        }
+
+        function getMod(value) {
+            return Math.floor((value - 10) / 2);
+        }
+
+        function updateAllCalculations() {
+            const attrs = ['for', 'des', 'con', 'int', 'sab', 'pod', 'pre'];
+            const mods = {};
+
+            attrs.forEach(attr => {
+                const val = parseInt(document.getElementById(attr).value) || 8;
+                mods[attr] = getMod(val);
+                const modEl = document.getElementById(attr + 'Mod');
+                modEl.textContent = mods[attr] >= 0 ? '+' + mods[attr] : mods[attr];
+            });
+
+            const pdl = parseInt(document.getElementById('pdl').value) || 0;
+            const con = parseInt(document.getElementById('con').value) || 8;
+            const pod = parseInt(document.getElementById('pod').value) || 8;
+            const raceHP = parseInt(document.getElementById('customRaceHP').value) || 6;
+
+            // Evolution bonuses
+            const evo10k = Math.floor(pdl / 10000);
+            const evo20k = Math.floor(pdl / 20000);
+            const evo30k = Math.floor(pdl / 30000);
+
+            const raceHPBonus = evo10k * raceHP;
+            document.getElementById('evoHP').textContent = raceHPBonus;
+            document.getElementById('evoPK').textContent = evo10k;
+            document.getElementById('evoTalents').textContent = 3 + evo20k;
+            document.getElementById('evoAttr').textContent = evo30k * 2;
+
+            // Secondary stats
+            const pv = (con * 5) + raceHPBonus;
+            const pk = (pod * 2) + evo10k;
+            const ca = 10 + mods.des;
+
+            document.getElementById('pv').textContent = pv;
+            document.getElementById('pk').textContent = pk;
+            document.getElementById('ca').textContent = ca;
+            document.getElementById('maxHP').textContent = pv;
+            document.getElementById('maxPK').textContent = pk;
+
+            // Update bars
+            updateResourceBars();
+        }
+
+        function updateResourceBars() {
+            const maxHP = parseInt(document.getElementById('pv').textContent) || 40;
+            const maxPK = parseInt(document.getElementById('pk').textContent) || 16;
+            const currentHP = Math.min(parseInt(document.getElementById('currentHP').value) || 0, maxHP);
+            const currentPK = Math.min(parseInt(document.getElementById('currentPK').value) || 0, maxPK);
+
+            document.getElementById('hpBar').style.width = (currentHP / maxHP * 100) + '%';
+            document.getElementById('pkBar').style.width = (currentPK / maxPK * 100) + '%';
+        }
+
+        function fullRestore() {
+            document.getElementById('currentHP').value = document.getElementById('pv').textContent;
+            document.getElementById('currentPK').value = document.getElementById('pk').textContent;
+            updateResourceBars();
+            scheduleAutoSave();
+        }
+
+        // Image handling
+        function toggleImageEdit() {
+            const box = document.getElementById('imageEditBox');
+            box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updateCharImage() {
+            const url = document.getElementById('charImageUrl').value;
+            const img = document.getElementById('charImageDisplay');
+            const placeholder = document.getElementById('charImagePlaceholder');
+
+            if (url) {
+                img.src = url;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                img.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+
+            document.getElementById('imageEditBox').style.display = 'none';
+            scheduleAutoSave();
+        }
+
+        // 3D Dice Rolling
+        async function rollAttribute(attrId, attrName) {
+            const attrValue = parseInt(document.getElementById(attrId).value) || 8;
+            const mod = getMod(attrValue);
+
+            currentRollData = {
+                type: 'attribute',
+                name: attrName,
+                attrId: attrId,
+                mod: mod
+            };
+
+            document.getElementById('diceModalTitle').textContent = `Rolagem de ${attrName}`;
+            document.getElementById('diceResultDisplay').classList.remove('show', 'critical', 'fumble');
+            document.getElementById('diceRollInfo').style.display = 'none';
+            document.getElementById('confirmRollBtn').style.display = 'none';
+
+            document.getElementById('dice3dModal').classList.add('active');
+
+            // Roll the dice
+            if (dice3d) {
+                const result = await dice3d.roll();
+                showRollResult(result, mod, attrName);
+            }
+        }
+
+        function showRollResult(diceResult, mod, name) {
+            const total = diceResult + mod;
+
+            const resultDisplay = document.getElementById('diceResultDisplay');
+            resultDisplay.textContent = diceResult;
+            resultDisplay.classList.add('show');
+
+            if (diceResult === 20) {
+                resultDisplay.classList.add('critical');
+            } else if (diceResult === 1) {
+                resultDisplay.classList.add('fumble');
+            }
+
+            document.getElementById('diceFormula').innerHTML =
+                `🎲 <strong>${diceResult}</strong> + ${mod >= 0 ? '+' : ''}${mod} (${name})`;
+            document.getElementById('diceTotal').textContent = `Total: ${total}`;
+            document.getElementById('diceRollInfo').style.display = 'block';
+            document.getElementById('confirmRollBtn').style.display = 'inline-flex';
+
+            currentRollData.diceResult = diceResult;
+            currentRollData.total = total;
+        }
+
+        function confirmRoll() {
+            if (currentRollData) {
+                rollHistory.add({
+                    name: currentRollData.name,
+                    diceResult: currentRollData.diceResult,
+                    mod: currentRollData.mod,
+                    total: currentRollData.total,
+                    isCritical: currentRollData.diceResult === 20,
+                    isFumble: currentRollData.diceResult === 1
+                });
+
+                updateRollHistoryDisplay();
+            }
+
+            closeDiceModal();
+        }
+
+        function closeDiceModal() {
+            document.getElementById('dice3dModal').classList.remove('active');
+            currentRollData = null;
+        }
+
+        // Roll History
+        function toggleRollHistory() {
+            document.getElementById('rollHistoryPanel').classList.toggle('open');
+        }
+
+        function updateRollHistoryDisplay() {
+            const list = document.getElementById('rollHistoryList');
+            const history = rollHistory.getAll();
+            const countEl = document.getElementById('rollCount');
+
+            if (history.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">Nenhuma rolagem ainda</p>';
+                countEl.classList.add('hidden');
+                return;
+            }
+
+            countEl.textContent = history.length;
+            countEl.classList.remove('hidden');
+
+            list.innerHTML = history.map(roll => `
+                <div class="roll-entry ${roll.isCritical ? 'critical' : ''} ${roll.isFumble ? 'fumble' : ''}">
+                    <div class="roll-entry-header">
+                        <span class="roll-entry-name">${roll.name}</span>
+                        <span class="roll-entry-result" style="color: ${roll.isCritical ? 'var(--ki-green)' : roll.isFumble ? 'var(--danger)' : 'var(--ssj-gold)'}">
+                            ${roll.total}
+                        </span>
+                    </div>
+                    <div class="roll-entry-details">
+                        🎲 ${roll.diceResult} ${roll.mod >= 0 ? '+' : ''}${roll.mod} • ${formatTime(roll.timestamp)}
+                        ${roll.isCritical ? ' • ⭐ CRÍTICO!' : ''}
+                        ${roll.isFumble ? ' • 💀 FALHA!' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function clearRollHistory() {
+            if (confirm('Limpar todo o histórico de rolagens?')) {
+                rollHistory.clear();
+                updateRollHistoryDisplay();
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Auto-save
+        function scheduleAutoSave() {
+            updateAllCalculations();
+
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('saving');
+            indicator.classList.remove('saved');
+            document.getElementById('saveStatus').textContent = 'Salvando...';
+
+            if (saveTimeout) clearTimeout(saveTimeout);
+
+            saveTimeout = setTimeout(async () => {
+                await saveSheet();
+            }, 2000);
+        }
+
+        async function saveSheet() {
+            try {
+                const data = getSheetData();
+
+                const res = await fetch(`${API_URL}/api/sheets/${sheetId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    const indicator = document.getElementById('saveIndicator');
+                    indicator.classList.remove('saving');
+                    indicator.classList.add('saved');
+                    document.getElementById('saveStatus').textContent = 'Salvo';
+
+                    // Update sheet name in header
+                    document.getElementById('sheetName').textContent = data.charName || 'Sem Nome';
+                }
+            } catch (e) {
+                console.error('Save failed:', e);
+                document.getElementById('saveStatus').textContent = 'Erro ao salvar';
+            }
+        }
+
+        function getSheetData() {
+            return {
+                charName: document.getElementById('charName').value,
+                playerName: document.getElementById('playerName').value,
+                charRace: document.getElementById('charRace').value,
+                customRaceHP: document.getElementById('customRaceHP').value,
+                charImageUrl: document.getElementById('charImageUrl').value,
+                racialTraits: document.getElementById('racialTraits').value,
+                pdl: document.getElementById('pdl').value,
+                for: document.getElementById('for').value,
+                des: document.getElementById('des').value,
+                con: document.getElementById('con').value,
+                int: document.getElementById('int').value,
+                sab: document.getElementById('sab').value,
+                pod: document.getElementById('pod').value,
+                pre: document.getElementById('pre').value,
+                currentHP: document.getElementById('currentHP').value,
+                currentPK: document.getElementById('currentPK').value,
+                notes: document.getElementById('notesEditor').innerHTML
+            };
+        }
+
+        function exportSheet() {
+            const data = getSheetData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = (data.charName || 'personagem') + '_ficha.json';
+            a.click();
+        }
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', async () => {
+            if (rollHistory && sheetId) {
+                // Archive rolls on page close
+                await fetch(`${API_URL}/api/sheets/${sheetId}/rolls`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                }).catch(() => { });
+            }
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+
+</html>
