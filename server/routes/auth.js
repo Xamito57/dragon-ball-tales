@@ -55,13 +55,17 @@ function validateCaptcha(captchaId, captchaText) {
 
 // Register
 router.post('/register', async (req, res) => {
+    console.log('📝 Tentativa de registro recebida');
     try {
         const { username, email, password, captchaId, captchaText } = req.body;
+        console.log('   Usuário:', username, '| Email:', email);
 
         // Validate CAPTCHA
         if (!validateCaptcha(captchaId, captchaText)) {
+            console.log('   ❌ CAPTCHA inválido');
             return res.status(400).json({ error: 'CAPTCHA inválido. Tente novamente.' });
         }
+        console.log('   ✅ CAPTCHA válido');
 
         // Validate input
         if (!username || !email || !password) {
@@ -82,7 +86,9 @@ router.post('/register', async (req, res) => {
         }
 
         // Check if user exists
+        console.log('   Lendo arquivo de usuários...');
         const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        console.log('   Total de usuários:', data.users.length);
 
         if (data.users.find(u => u.email === email)) {
             return res.status(400).json({ error: 'Email já cadastrado' });
@@ -93,6 +99,7 @@ router.post('/register', async (req, res) => {
         }
 
         // Create user
+        console.log('   Criando novo usuário...');
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = {
             id: uuidv4(),
@@ -117,7 +124,9 @@ router.post('/register', async (req, res) => {
         };
 
         data.users.push(newUser);
+        console.log('   Salvando arquivo...');
         fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+        console.log('   ✅ Usuário salvo!');
 
         const token = generateToken(newUser);
 
@@ -134,8 +143,8 @@ router.post('/register', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Register error:', error);
-        res.status(500).json({ error: 'Erro ao criar conta' });
+        console.error('❌ Register error:', error);
+        res.status(500).json({ error: 'Erro ao criar conta: ' + error.message });
     }
 });
 

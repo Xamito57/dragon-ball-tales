@@ -19,53 +19,68 @@ const sheetsDir = path.join(dataDir, 'sheets');
 const uploadsDir = path.join(dataDir, 'uploads');
 const rollsDir = path.join(dataDir, 'rolls');
 
-[dataDir, sheetsDir, uploadsDir, rollsDir].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
+console.log('📁 Criando diretórios de dados...');
+console.log('   Data dir:', dataDir);
+
+try {
+    [dataDir, sheetsDir, uploadsDir, rollsDir].forEach(dir => {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+            console.log('   ✅ Criado:', dir);
+        } else {
+            console.log('   ✅ Existe:', dir);
+        }
+    });
+} catch (err) {
+    console.error('❌ Erro ao criar diretórios:', err);
+}
 
 // Initialize users.json if it doesn't exist
 const usersFile = path.join(dataDir, 'users.json');
-if (!fs.existsSync(usersFile)) {
-    const bcrypt = require('bcrypt');
-    const adminPassword = bcrypt.hashSync('DragonBalls2024!', 10);
-    const initialData = {
-        users: [{
-            id: 'admin-001',
-            email: 'admin@dragonballtales.com',
-            username: 'admin',
-            password: adminPassword,
-            isAdmin: true,
-            createdAt: new Date().toISOString(),
-            lastLogin: null,
-            loginHistory: [],
-            preferences: {
-                fontSize: 16,
-                fontColor: '#f0f0f5',
-                borderColor: '#ff6b00',
-                backgroundColor: '#050508',
-                backgroundImage: null
-            }
-        }]
-    };
-    fs.writeFileSync(usersFile, JSON.stringify(initialData, null, 2));
+console.log('👤 Verificando arquivo de usuários...');
+
+try {
+    if (!fs.existsSync(usersFile)) {
+        console.log('   Criando users.json com admin padrão...');
+        const bcrypt = require('bcrypt');
+        const adminPassword = bcrypt.hashSync('DragonBalls2024!', 10);
+        const initialData = {
+            users: [{
+                id: 'admin-001',
+                email: 'admin@dragonballtales.com',
+                username: 'admin',
+                password: adminPassword,
+                isAdmin: true,
+                createdAt: new Date().toISOString(),
+                lastLogin: null,
+                loginHistory: [],
+                preferences: {
+                    fontSize: 16,
+                    fontColor: '#f0f0f5',
+                    borderColor: '#ff6b00',
+                    backgroundColor: '#050508',
+                    backgroundImage: null
+                }
+            }]
+        };
+        fs.writeFileSync(usersFile, JSON.stringify(initialData, null, 2));
+        console.log('   ✅ users.json criado!');
+    } else {
+        const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        console.log('   ✅ users.json existe com', data.users.length, 'usuários');
+    }
+} catch (err) {
+    console.error('❌ Erro ao inicializar users.json:', err);
 }
 
-// Security middleware
+// Security middleware - CSP disabled for now to allow captcha and external resources
 app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://accounts.google.com", "https://apis.google.com", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
-            connectSrc: ["'self'", "https://accounts.google.com"],
-            frameSrc: ["https://accounts.google.com"]
-        }
-    }
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
 }));
+
+// Trust proxy for Render
+app.set('trust proxy', 1);
 
 app.use(cors({
     origin: true,
