@@ -9,19 +9,32 @@
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/css/main.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /* Sheet-specific styles */
+        :root {
+            --user-font-size: 16px;
+            --user-text-color: #f0f0f5;
+            --user-border-color: #ff6b00;
+            --user-bg-color: #050508;
+        }
+
+        body {
+            font-size: var(--user-font-size);
+            color: var(--user-text-color);
+            background-color: var(--user-bg-color);
+        }
+
         .sheet-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 15px 25px;
             background: var(--surface);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--user-border-color);
             position: sticky;
             top: 0;
             z-index: 50;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .sheet-nav {
@@ -39,7 +52,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
         }
 
@@ -51,16 +64,174 @@
             color: var(--success);
         }
 
+        /* Improved card styles */
+        .card {
+            background: var(--surface);
+            border: 2px solid var(--user-border-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--user-border-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Form improvements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--user-text-color);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--user-text-color);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--user-border-color);
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+        }
+
+        /* Attribute boxes - bigger and more visible */
+        .attr-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 110px;
+        }
+
+        .attr-box:hover {
+            border-color: var(--user-border-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        .attr-box .attr-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--user-border-color);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .attr-box input {
+            width: 70px;
+            font-size: 1.5rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            padding: 10px;
+        }
+
+        .attr-box .attr-mod {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: #000;
+            background: var(--user-border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: inline-block;
+        }
+
+        /* Secondary stats */
+        .stat-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-box .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .stat-box .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* Resource bars */
+        .resource-bar-container {
+            margin-bottom: 20px;
+        }
+
+        .resource-bar-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .resource-bar {
+            height: 25px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .resource-bar-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .resource-bar-fill.hp {
+            background: linear-gradient(90deg, #c0392b, #e74c3c);
+        }
+
+        .resource-bar-fill.ki {
+            background: linear-gradient(90deg, #2980b9, #3498db);
+        }
+
         /* Roll History Panel */
         .roll-history-panel {
             position: fixed;
             right: 0;
             top: 0;
             bottom: 0;
-            width: 350px;
+            width: 380px;
             background: var(--bg-dark);
-            border-left: 2px solid var(--border-color);
-            padding: 20px;
+            border-left: 3px solid var(--user-border-color);
+            padding: 25px;
             transform: translateX(100%);
             transition: transform 0.3s ease;
             z-index: 100;
@@ -72,36 +243,163 @@
             transform: translateX(0);
         }
 
-        .roll-history-header {
+        .roll-toggle-btn {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--user-border-color);
+            border: none;
+            color: #000;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(255, 107, 0, 0.5);
+            transition: all 0.3s;
+            z-index: 99;
+        }
+
+        .roll-toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Dice Modal */
+        .dice-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .dice-modal.active {
+            display: flex;
+        }
+
+        .dice-modal-content {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .dice-display {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            background: linear-gradient(145deg, #1a1a2e, #0a0a15);
+            border: 4px solid var(--user-border-color);
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .roll-history-title {
+            justify-content: center;
             font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
             color: var(--ssj-gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: pulse 1s infinite;
         }
 
-        .roll-history-list {
-            flex: 1;
-            overflow-y: auto;
+        .dice-display.rolling {
+            animation: shake 0.3s infinite;
         }
 
+        .dice-display.critical {
+            color: var(--ki-green);
+            border-color: var(--ki-green);
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+
+        .dice-display.fumble {
+            color: var(--danger);
+            border-color: var(--danger);
+            text-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateX(-5px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+
+        /* Bonus input */
+        .bonus-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .bonus-input-group label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .bonus-input-group input {
+            width: 100px;
+            padding: 12px;
+            font-size: 1.3rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--user-border-color);
+            border-radius: 10px;
+            color: var(--ssj-gold);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .roll-result-box {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .roll-formula {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .roll-total {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--secondary);
+        }
+
+        /* Roll entry */
         .roll-entry {
             background: var(--surface);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-
-        .roll-entry:hover {
-            border-color: var(--primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
         }
 
         .roll-entry.critical {
@@ -114,166 +412,68 @@
             background: rgba(239, 68, 68, 0.05);
         }
 
-        .roll-entry-header {
+        /* PDL Scouter */
+        .pdl-scouter {
+            border-color: var(--ki-green) !important;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .pdl-input {
+            width: 220px;
+            font-size: 3rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            color: var(--ki-green);
+            background: transparent;
+            border: none;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Evolution grid */
+        .evo-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .evo-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .evo-box .evo-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
             margin-bottom: 8px;
         }
 
-        .roll-entry-name {
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .roll-entry-result {
+        .evo-box .evo-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 900;
-        }
-
-        .roll-entry-details {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .roll-toggle-btn {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: none;
-            color: #000;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
-            transition: all 0.3s;
-            z-index: 99;
-        }
-
-        .roll-toggle-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .roll-toggle-btn .count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 24px;
-            height: 24px;
-            background: var(--danger);
-            border-radius: 50%;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-
-        /* 3D Dice Modal */
-        .dice-3d-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-
-        .dice-3d-modal.active {
-            display: flex;
-        }
-
-        .dice-3d-content {
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .dice-3d-container {
-            width: 300px;
-            height: 300px;
-            margin: 0 auto 20px;
-        }
-
-        .dice-result-display {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 4rem;
-            font-weight: 900;
+            font-size: 1.8rem;
             color: var(--ssj-gold);
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            margin-bottom: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
         }
 
-        .dice-result-display.show {
-            opacity: 1;
-        }
-
-        .dice-result-display.critical {
-            color: var(--ki-green);
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
-        }
-
-        .dice-result-display.fumble {
-            color: var(--danger);
-            text-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
-        }
-
-        .dice-roll-info {
-            background: var(--surface);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 400px;
-        }
-
-        .dice-roll-formula {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-        }
-
-        .dice-roll-total {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            color: var(--secondary);
-        }
-
-        /* Debug panel adjustments for roll history */
-        .debug-section {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .debug-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            color: var(--secondary);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
             .roll-history-panel {
                 width: 100%;
             }
 
-            .sheet-header {
-                flex-wrap: wrap;
-                gap: 10px;
+            .evo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dice-display {
+                width: 150px;
+                height: 150px;
+                font-size: 3.5rem;
             }
         }
     </style>
@@ -284,7 +484,8 @@
     <header class="sheet-header">
         <div style="display: flex; align-items: center; gap: 15px;">
             <a href="/dashboard" class="btn btn-sm">← Voltar</a>
-            <span id="sheetName" style="font-family: 'Orbitron'; color: var(--ssj-gold);">Carregando...</span>
+            <span id="sheetName"
+                style="font-family: 'Orbitron'; color: var(--ssj-gold); font-size: 1.1rem;">Carregando...</span>
         </div>
 
         <div class="save-indicator" id="saveIndicator">
@@ -300,67 +501,85 @@
 
     <!-- Main Sheet Content -->
     <main class="sheet-main" id="sheetContent">
-        <!-- Character sheet content will be loaded here -->
         <div style="text-align: center; padding: 50px;">
-            <div class="loading-spinner"
-                style="width: 40px; height: 40px; margin: 0 auto 20px; border: 3px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;">
+            <div
+                style="width: 50px; height: 50px; margin: 0 auto 20px; border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;">
             </div>
-            <p>Carregando ficha...</p>
+            <p style="font-size: 1.1rem;">Carregando ficha...</p>
         </div>
     </main>
 
     <!-- Roll History Panel -->
     <div class="roll-history-panel" id="rollHistoryPanel">
-        <div class="roll-history-header">
-            <h2 class="roll-history-title">🎲 Histórico de Rolagens</h2>
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color);">
+            <h2 style="font-family: 'Orbitron'; color: var(--ssj-gold); font-size: 1.2rem;">🎲 Histórico</h2>
             <button class="btn btn-sm" onclick="toggleRollHistory()">✕</button>
         </div>
 
-        <div class="debug-section">
-            <div class="debug-title">
-                <span>🔧</span> Debug - Sessão Atual
-            </div>
-            <p style="font-size: 0.8rem; color: var(--text-secondary);">
-                Histórico mantido apenas durante a sessão. Será arquivado após logout (recuperável pelo admin em até 3
-                dias).
-            </p>
+        <div id="rollHistoryList" style="flex: 1; overflow-y: auto;">
+            <p style="color: var(--text-secondary); text-align: center; padding: 30px;">Nenhuma rolagem ainda</p>
         </div>
 
-        <div class="roll-history-list" id="rollHistoryList">
-            <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
-                Nenhuma rolagem ainda
-            </p>
-        </div>
-
-        <button class="btn btn-danger btn-sm" style="margin-top: 15px;" onclick="clearRollHistory()">
-            🗑️ Limpar Histórico
-        </button>
+        <button class="btn btn-danger btn-sm" style="margin-top: 15px;" onclick="clearRollHistory()">🗑️ Limpar</button>
     </div>
 
     <!-- Roll Toggle Button -->
-    <button class="roll-toggle-btn" onclick="toggleRollHistory()">
-        🎲
-        <span class="count hidden" id="rollCount">0</span>
-    </button>
+    <button class="roll-toggle-btn" onclick="toggleRollHistory()">🎲</button>
 
-    <!-- 3D Dice Modal -->
-    <div class="dice-3d-modal" id="dice3dModal">
-        <div class="dice-3d-content">
-            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;" id="diceModalTitle">
-                Rolando...
+    <!-- Dice Roll Modal -->
+    <div class="dice-modal" id="diceModal">
+        <div class="dice-modal-content">
+            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 25px; font-size: 1.4rem;"
+                id="diceModalTitle">
+                Rolagem de Atributo
             </h2>
 
-            <div class="dice-3d-container" id="dice3dContainer"></div>
-
-            <div class="dice-result-display" id="diceResultDisplay">20</div>
-
-            <div class="dice-roll-info" id="diceRollInfo" style="display: none;">
-                <div class="dice-roll-formula" id="diceFormula"></div>
-                <div class="dice-roll-total" id="diceTotal"></div>
+            <!-- Bonus/Penalty Input - BEFORE rolling -->
+            <div class="bonus-input-group" id="bonusInputGroup">
+                <label>Bônus/Penalidade:</label>
+                <input type="number" id="rollBonus" value="0" placeholder="+0">
             </div>
 
-            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-                <button class="btn btn-primary" id="confirmRollBtn" style="display: none;" onclick="confirmRoll()">
+            <!-- Roll Type Buttons -->
+            <div id="rollButtonsGroup" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
+                <button class="btn btn-lg" onclick="executeRoll('advantage')"
+                    style="padding: 16px 30px; font-size: 1.1rem; background: var(--ki-green); border-color: var(--ki-green); color: #000;">
+                    🍀 ROLAR COM VANTAGEM
+                    <span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 4px;">Rola 2d20, usa o
+                        MAIOR</span>
+                </button>
+
+                <button class="btn btn-primary btn-lg" onclick="executeRoll('normal')"
+                    style="padding: 18px 40px; font-size: 1.2rem;">
+                    🎲 ROLAR NORMAL
+                </button>
+
+                <button class="btn btn-lg" onclick="executeRoll('disadvantage')"
+                    style="padding: 16px 30px; font-size: 1.1rem; background: var(--danger); border-color: var(--danger); color: #fff;">
+                    💀 ROLAR COM DESVANTAGEM
+                    <span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 4px;">Rola 2d20, usa o
+                        MENOR</span>
+                </button>
+            </div>
+
+            <!-- Dice Display (for animation) -->
+            <div id="diceDisplayContainer" style="display: none;">
+                <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+                    <div class="dice-display" id="diceDisplay1">?</div>
+                    <div class="dice-display" id="diceDisplay2" style="display: none;">?</div>
+                </div>
+                <div id="rollTypeLabel" style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 15px;">
+                </div>
+            </div>
+
+            <div class="roll-result-box" id="rollResultBox" style="display: none;">
+                <div class="roll-formula" id="rollFormula"></div>
+                <div class="roll-total" id="rollTotal"></div>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px;">
+                <button class="btn btn-success" id="confirmRollBtn" style="display: none;" onclick="confirmRoll()">
                     ✓ Confirmar
                 </button>
                 <button class="btn" onclick="closeDiceModal()">Fechar</button>
@@ -368,13 +587,11 @@
         </div>
     </div>
 
-    <script src="/js/dice3d.js"></script>
     <script>
         const API_URL = '';
         let sheetId = null;
         let sheetData = null;
-        let dice3d = null;
-        let rollHistory = null;
+        let rollHistory = [];
         let saveTimeout = null;
         let currentRollData = null;
 
@@ -385,7 +602,7 @@
             return match ? match[1] : null;
         }
 
-        // Check auth and load sheet
+        // Initialize
         async function init() {
             const token = localStorage.getItem('authToken');
             if (!token) {
@@ -400,22 +617,14 @@
                 return;
             }
 
-            // Initialize roll history
-            rollHistory = new RollHistory();
-            rollHistory.load();
-
-            // Load user preferences
-            await loadPreferences();
-
-            // Load sheet data
-            await loadSheet();
-
-            // Initialize 3D dice
-            const container = document.getElementById('dice3dContainer');
-            if (container) {
-                dice3d = new Dice3D(container);
+            // Load roll history from session
+            const savedHistory = sessionStorage.getItem('rollHistory_' + sheetId);
+            if (savedHistory) {
+                rollHistory = JSON.parse(savedHistory);
             }
 
+            await loadPreferences();
+            await loadSheet();
             updateRollHistoryDisplay();
         }
 
@@ -435,15 +644,30 @@
         }
 
         function applyPreferences(prefs) {
-            if (prefs.fontColor) document.documentElement.style.setProperty('--text-primary', prefs.fontColor);
-            if (prefs.borderColor) document.documentElement.style.setProperty('--primary', prefs.borderColor);
-            if (prefs.backgroundColor) document.documentElement.style.setProperty('--bg-dark', prefs.backgroundColor);
-            if (prefs.fontSize) document.body.style.fontSize = prefs.fontSize + 'px';
+            const root = document.documentElement;
 
+            if (prefs.fontColor) {
+                root.style.setProperty('--user-text-color', prefs.fontColor);
+                root.style.setProperty('--text-primary', prefs.fontColor);
+            }
+            if (prefs.borderColor) {
+                root.style.setProperty('--user-border-color', prefs.borderColor);
+                root.style.setProperty('--primary', prefs.borderColor);
+            }
+            if (prefs.backgroundColor) {
+                root.style.setProperty('--user-bg-color', prefs.backgroundColor);
+                root.style.setProperty('--bg-dark', prefs.backgroundColor);
+                document.body.style.backgroundColor = prefs.backgroundColor;
+            }
+            if (prefs.fontSize) {
+                root.style.setProperty('--user-font-size', prefs.fontSize + 'px');
+                document.body.style.fontSize = prefs.fontSize + 'px';
+            }
             if (prefs.backgroundImage) {
                 document.body.style.backgroundImage = `url(${prefs.backgroundImage})`;
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundPosition = 'center';
             }
         }
 
@@ -453,16 +677,11 @@
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
                 });
 
-                if (!res.ok) {
-                    throw new Error('Ficha não encontrada');
-                }
+                if (!res.ok) throw new Error('Ficha não encontrada');
 
                 sheetData = await res.json();
                 document.getElementById('sheetName').textContent = sheetData.charName || 'Sem Nome';
-
-                // Render the sheet
                 renderSheet();
-
             } catch (e) {
                 console.error('Failed to load sheet:', e);
                 alert('Erro ao carregar ficha');
@@ -471,52 +690,46 @@
         }
 
         function renderSheet() {
-            // Build the sheet HTML from the original template
             const content = document.getElementById('sheetContent');
             content.innerHTML = buildSheetHTML();
-
-            // Load values from sheetData
             loadSheetValues();
 
-            // Add event listeners for auto-save
             content.querySelectorAll('input, select, textarea').forEach(el => {
                 el.addEventListener('change', scheduleAutoSave);
                 el.addEventListener('input', scheduleAutoSave);
             });
 
-            // Initialize calculations
             updateAllCalculations();
         }
 
         function buildSheetHTML() {
-            // Simplified sheet structure - main sections
             return `
                 <!-- Logo -->
-                <div style="text-align:center; margin-bottom: 20px;">
+                <div style="text-align: center; margin-bottom: 30px;">
                     <img src="https://media.discordapp.net/attachments/1372692677895651453/1455631979692429425/Tales.png?ex=69556e6c&is=69541cec&hm=d7b042afcf6e2e6626d8484c698721bf25f70bd189fe964c4cfc6db4c20ac5c2&=&format=webp&quality=lossless&width=1404&height=673" 
                          alt="Dragon Ball Tales" 
-                         style="max-width: 350px; filter: drop-shadow(0 0 5px orange);">
+                         style="max-width: 350px; filter: drop-shadow(0 0 10px orange);">
                 </div>
                 
                 <!-- Character Info -->
-                <div class="card" style="margin-bottom: 25px;">
-                    <div style="display: flex; gap: 25px; flex-wrap: wrap; align-items: flex-start;">
-                        <div class="character-image-container" style="flex-shrink: 0;">
+                <div class="card">
+                    <h2 class="card-title">👤 Informações do Personagem</h2>
+                    <div style="display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start;">
+                        <div style="flex-shrink: 0;">
                             <div id="charImageContainer" 
-                                 style="width: 250px; height: 300px; border: 3px solid var(--primary); border-radius: 16px; overflow: hidden; cursor: pointer; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;"
+                                 style="width: 200px; height: 250px; border: 3px solid var(--user-border-color); border-radius: 16px; overflow: hidden; cursor: pointer; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;"
                                  onclick="toggleImageEdit()">
                                 <img id="charImageDisplay" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                                <span id="charImagePlaceholder" style="color: var(--text-secondary);">📷 Clique para adicionar</span>
+                                <span id="charImagePlaceholder" style="color: var(--text-secondary); font-size: 3rem;">📷</span>
                             </div>
-                            <div id="imageEditBox" style="display: none; margin-top: 10px;">
-                                <input type="url" id="charImageUrl" placeholder="URL da imagem..." 
-                                       style="width: 100%; margin-bottom: 8px;">
+                            <div id="imageEditBox" style="display: none; margin-top: 12px;">
+                                <input type="url" id="charImageUrl" placeholder="URL da imagem..." style="width: 200px; margin-bottom: 8px;">
                                 <button class="btn btn-sm btn-primary" style="width: 100%;" onclick="updateCharImage()">Atualizar</button>
                             </div>
                         </div>
                         
-                        <div style="flex: 1; min-width: 250px;">
-                            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="flex: 1; min-width: 280px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 18px;">
                                 <div class="form-group">
                                     <label>Personagem</label>
                                     <input type="text" id="charName" placeholder="Nome do Personagem">
@@ -535,67 +748,61 @@
                                 </div>
                             </div>
                             
-                            <div class="form-group" style="margin-top: 15px;">
+                            <div class="form-group" style="margin-top: 18px;">
                                 <label>Características Raciais</label>
-                                <textarea id="racialTraits" placeholder="Descreva os bônus e habilidades da sua raça..."
-                                          style="min-height: 80px;"></textarea>
+                                <textarea id="racialTraits" placeholder="Descreva os bônus e habilidades da sua raça..." style="min-height: 100px;"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- PDL Scouter -->
-                <div class="card" style="margin-bottom: 25px; border-color: var(--ki-green); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                <div class="card pdl-scouter">
                     <div style="font-family: 'Orbitron'; color: var(--ki-green);">
-                        <div style="font-size: 1rem; letter-spacing: 2px;">SCANNING TARGET...</div>
-                        <div style="font-size: 0.7rem; opacity: 0.7;">ANALYSING POWER LEVELS</div>
+                        <div style="font-size: 1.2rem; letter-spacing: 3px;">SCANNING TARGET...</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 5px;">ANALYSING POWER LEVELS</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--ki-green); font-family: 'Orbitron'; margin-bottom: 5px;">PODER DE LUTA</div>
-                        <input type="number" id="pdl" value="0" min="0" 
-                               style="width: 200px; font-size: 2.5rem; font-family: 'Orbitron'; font-weight: 900; 
-                                      color: var(--ki-green); background: transparent; border: none; text-align: center;
-                                      text-shadow: 0 0 15px rgba(0, 255, 136, 0.5);">
+                        <div style="font-size: 0.8rem; color: var(--ki-green); font-family: 'Orbitron'; margin-bottom: 8px; letter-spacing: 2px;">PODER DE LUTA</div>
+                        <input type="number" id="pdl" value="0" min="0" class="pdl-input">
                     </div>
                 </div>
                 
                 <!-- Evolution Tracker -->
-                <div class="card" style="margin-bottom: 25px;">
+                <div class="card">
                     <h2 class="card-title">📈 Evolução por PDL</h2>
-                    <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Bônus PV (10k)</div>
-                            <div id="evoHP" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">0</div>
+                    <div class="evo-grid">
+                        <div class="evo-box">
+                            <div class="evo-label">Bônus PV (10k)</div>
+                            <div class="evo-value" id="evoHP">0</div>
                         </div>
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Bônus PK (10k)</div>
-                            <div id="evoPK" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">0</div>
+                        <div class="evo-box">
+                            <div class="evo-label">Bônus PK (10k)</div>
+                            <div class="evo-value" id="evoPK">0</div>
                         </div>
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Talentos (20k)</div>
-                            <div id="evoTalents" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">3</div>
+                        <div class="evo-box">
+                            <div class="evo-label">Talentos (20k)</div>
+                            <div class="evo-value" id="evoTalents">3</div>
                         </div>
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Atributos (30k)</div>
-                            <div id="evoAttr" style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--ssj-gold);">0</div>
+                        <div class="evo-box">
+                            <div class="evo-label">Atributos (30k)</div>
+                            <div class="evo-value" id="evoAttr">0</div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Attributes -->
-                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 25px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 25px; margin-bottom: 25px;">
                     <!-- Primary Attributes -->
                     <div class="card">
                         <h2 class="card-title">💪 Atributos Primários</h2>
-                        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px;">
+                        <p style="color: var(--text-secondary); margin-bottom: 18px; font-size: 0.9rem;">Clique em um atributo para rolar</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 15px;">
                             ${['FOR', 'DES', 'CON', 'INT', 'SAB', 'POD', 'PRE'].map(attr => `
-                                <div class="attr-box" onclick="rollAttribute('${attr.toLowerCase()}', '${attr}')" 
-                                     style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s;">
-                                    <div style="font-family: 'Orbitron'; font-size: 0.85rem; color: var(--primary); margin-bottom: 8px;">${attr}</div>
-                                    <input type="number" id="${attr.toLowerCase()}" value="8" min="1" max="30" 
-                                           onclick="event.stopPropagation()"
-                                           style="width: 55px; font-size: 1.3rem; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-family: 'Orbitron';">
-                                    <div id="${attr.toLowerCase()}Mod" style="font-family: 'Orbitron'; font-weight: 900; color: #000; background: var(--primary); padding: 4px 12px; border-radius: 6px; margin-top: 8px; display: inline-block;">-1</div>
+                                <div class="attr-box" onclick="openRollModal('${attr.toLowerCase()}', '${attr}')">
+                                    <div class="attr-name">${attr}</div>
+                                    <input type="number" id="${attr.toLowerCase()}" value="8" min="1" max="30" onclick="event.stopPropagation()">
+                                    <div class="attr-mod" id="${attr.toLowerCase()}Mod">-1</div>
                                 </div>
                             `).join('')}
                         </div>
@@ -604,43 +811,50 @@
                     <!-- Secondary Attributes -->
                     <div class="card">
                         <h2 class="card-title">⚔️ Atributos Secundários</h2>
-                        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; text-align: center;">
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Pontos de Vida</div>
-                                <div id="pv" style="font-family: 'Orbitron'; font-size: 1.8rem; color: #fff;">40</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                            <div class="stat-box">
+                                <div class="stat-label">Pontos de Vida</div>
+                                <div class="stat-value" id="pv">40</div>
                             </div>
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; text-align: center;">
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Pontos de Ki</div>
-                                <div id="pk" style="font-family: 'Orbitron'; font-size: 1.8rem; color: #fff;">16</div>
+                            <div class="stat-box">
+                                <div class="stat-label">Pontos de Ki</div>
+                                <div class="stat-value" id="pk">16</div>
                             </div>
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; text-align: center;">
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Classe de Armadura</div>
-                                <div id="ca" style="font-family: 'Orbitron'; font-size: 1.8rem; color: #fff;">10</div>
+                            <div class="stat-box">
+                                <div class="stat-label">Classe de Armadura</div>
+                                <div class="stat-value" id="ca">10</div>
                             </div>
                         </div>
                         
-                        <!-- HP/PK Bars -->
-                        <div style="margin-top: 20px;">
-                            <div style="margin-bottom: 15px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="color: #e74c3c;">❤️ HP</span>
-                                    <span><input type="number" id="currentHP" value="40" min="0" style="width: 50px; text-align: center;"> / <span id="maxHP">40</span></span>
-                                </div>
-                                <div style="height: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden;">
-                                    <div id="hpBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, #c0392b, #e74c3c); transition: width 0.3s;"></div>
-                                </div>
+                        <!-- HP Bar -->
+                        <div class="resource-bar-container">
+                            <div class="resource-bar-header">
+                                <span style="color: #e74c3c; font-weight: 600;">❤️ HP</span>
+                                <span>
+                                    <input type="number" id="currentHP" value="40" min="0" style="width: 60px; text-align: center; padding: 6px;"> 
+                                    / <span id="maxHP">40</span>
+                                </span>
                             </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span style="color: #3498db;">⚡ KI</span>
-                                    <span><input type="number" id="currentPK" value="16" min="0" style="width: 50px; text-align: center;"> / <span id="maxPK">16</span></span>
-                                </div>
-                                <div style="height: 20px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden;">
-                                    <div id="pkBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, #2980b9, #3498db); transition: width 0.3s;"></div>
-                                </div>
+                            <div class="resource-bar">
+                                <div class="resource-bar-fill hp" id="hpBar" style="width: 100%;"></div>
                             </div>
-                            <button class="btn btn-sm btn-success" style="margin-top: 10px;" onclick="fullRestore()">🔄 Restaurar Tudo</button>
                         </div>
+                        
+                        <!-- KI Bar -->
+                        <div class="resource-bar-container">
+                            <div class="resource-bar-header">
+                                <span style="color: #3498db; font-weight: 600;">⚡ KI</span>
+                                <span>
+                                    <input type="number" id="currentPK" value="16" min="0" style="width: 60px; text-align: center; padding: 6px;"> 
+                                    / <span id="maxPK">16</span>
+                                </span>
+                            </div>
+                            <div class="resource-bar">
+                                <div class="resource-bar-fill ki" id="pkBar" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success" style="width: 100%; margin-top: 10px;" onclick="fullRestore()">🔄 Restaurar Tudo</button>
                     </div>
                 </div>
                 
@@ -648,7 +862,7 @@
                 <div class="card">
                     <h2 class="card-title">📝 Anotações</h2>
                     <div id="notesEditor" contenteditable="true" 
-                         style="min-height: 150px; padding: 15px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);"
+                         style="min-height: 180px; padding: 20px; background: rgba(0,0,0,0.3); border: 2px solid var(--border-color); border-radius: 12px; color: var(--user-text-color); font-size: 1rem; line-height: 1.6;"
                          oninput="scheduleAutoSave()"></div>
                 </div>
             `;
@@ -657,7 +871,6 @@
         function loadSheetValues() {
             if (!sheetData) return;
 
-            // Basic info
             document.getElementById('charName').value = sheetData.charName || '';
             document.getElementById('playerName').value = sheetData.playerName || '';
             document.getElementById('charRace').value = sheetData.charRace || '';
@@ -665,7 +878,6 @@
             document.getElementById('racialTraits').value = sheetData.racialTraits || '';
             document.getElementById('pdl').value = sheetData.pdl || 0;
 
-            // Attributes
             document.getElementById('for').value = sheetData.for || 8;
             document.getElementById('des').value = sheetData.des || 8;
             document.getElementById('con').value = sheetData.con || 8;
@@ -674,14 +886,10 @@
             document.getElementById('pod').value = sheetData.pod || 8;
             document.getElementById('pre').value = sheetData.pre || 8;
 
-            // Current HP/PK
             document.getElementById('currentHP').value = sheetData.currentHP || 40;
             document.getElementById('currentPK').value = sheetData.currentPK || 16;
-
-            // Notes
             document.getElementById('notesEditor').innerHTML = sheetData.notes || '';
 
-            // Image
             if (sheetData.charImageUrl) {
                 document.getElementById('charImageUrl').value = sheetData.charImageUrl;
                 updateCharImage();
@@ -708,7 +916,6 @@
             const pod = parseInt(document.getElementById('pod').value) || 8;
             const raceHP = parseInt(document.getElementById('customRaceHP').value) || 6;
 
-            // Evolution bonuses
             const evo10k = Math.floor(pdl / 10000);
             const evo20k = Math.floor(pdl / 20000);
             const evo30k = Math.floor(pdl / 30000);
@@ -719,7 +926,6 @@
             document.getElementById('evoTalents').textContent = 3 + evo20k;
             document.getElementById('evoAttr').textContent = evo30k * 2;
 
-            // Secondary stats
             const pv = (con * 5) + raceHPBonus;
             const pk = (pod * 2) + evo10k;
             const ca = 10 + mods.des;
@@ -730,7 +936,6 @@
             document.getElementById('maxHP').textContent = pv;
             document.getElementById('maxPK').textContent = pk;
 
-            // Update bars
             updateResourceBars();
         }
 
@@ -775,74 +980,206 @@
             scheduleAutoSave();
         }
 
-        // 3D Dice Rolling
-        async function rollAttribute(attrId, attrName) {
+        // DICE ROLLING SYSTEM
+        function openRollModal(attrId, attrName) {
             const attrValue = parseInt(document.getElementById(attrId).value) || 8;
             const mod = getMod(attrValue);
 
             currentRollData = {
-                type: 'attribute',
                 name: attrName,
                 attrId: attrId,
                 mod: mod
             };
 
             document.getElementById('diceModalTitle').textContent = `Rolagem de ${attrName}`;
-            document.getElementById('diceResultDisplay').classList.remove('show', 'critical', 'fumble');
-            document.getElementById('diceRollInfo').style.display = 'none';
+            document.getElementById('rollBonus').value = 0;
+            document.getElementById('bonusInputGroup').style.display = 'flex';
+            document.getElementById('rollButtonsGroup').style.display = 'flex';
+            document.getElementById('diceDisplayContainer').style.display = 'none';
+            document.getElementById('rollResultBox').style.display = 'none';
             document.getElementById('confirmRollBtn').style.display = 'none';
 
-            document.getElementById('dice3dModal').classList.add('active');
-
-            // Roll the dice
-            if (dice3d) {
-                const result = await dice3d.roll();
-                showRollResult(result, mod, attrName);
-            }
+            document.getElementById('diceModal').classList.add('active');
         }
 
-        function showRollResult(diceResult, mod, name) {
-            const total = diceResult + mod;
+        function executeRoll(rollType) {
+            const bonus = parseInt(document.getElementById('rollBonus').value) || 0;
+            currentRollData.bonus = bonus;
+            currentRollData.rollType = rollType;
 
-            const resultDisplay = document.getElementById('diceResultDisplay');
-            resultDisplay.textContent = diceResult;
-            resultDisplay.classList.add('show');
+            // Hide inputs, show dice
+            document.getElementById('bonusInputGroup').style.display = 'none';
+            document.getElementById('rollButtonsGroup').style.display = 'none';
 
-            if (diceResult === 20) {
-                resultDisplay.classList.add('critical');
-            } else if (diceResult === 1) {
-                resultDisplay.classList.add('fumble');
+            const container = document.getElementById('diceDisplayContainer');
+            const dice1 = document.getElementById('diceDisplay1');
+            const dice2 = document.getElementById('diceDisplay2');
+            const typeLabel = document.getElementById('rollTypeLabel');
+
+            container.style.display = 'block';
+            dice1.classList.add('rolling');
+            dice1.classList.remove('critical', 'fumble');
+            dice1.textContent = '?';
+
+            // Show second dice for advantage/disadvantage
+            if (rollType === 'advantage' || rollType === 'disadvantage') {
+                dice2.style.display = 'flex';
+                dice2.classList.add('rolling');
+                dice2.classList.remove('critical', 'fumble');
+                dice2.textContent = '?';
+
+                if (rollType === 'advantage') {
+                    typeLabel.innerHTML = '🍀 <strong style="color: var(--ki-green);">VANTAGEM</strong> - Usando o MAIOR';
+                } else {
+                    typeLabel.innerHTML = '💀 <strong style="color: var(--danger);">DESVANTAGEM</strong> - Usando o MENOR';
+                }
+            } else {
+                dice2.style.display = 'none';
+                typeLabel.innerHTML = '🎲 Rolagem Normal';
             }
 
-            document.getElementById('diceFormula').innerHTML =
-                `🎲 <strong>${diceResult}</strong> + ${mod >= 0 ? '+' : ''}${mod} (${name})`;
-            document.getElementById('diceTotal').textContent = `Total: ${total}`;
-            document.getElementById('diceRollInfo').style.display = 'block';
+            // Rolling animation
+            let rollCount = 0;
+            const rollInterval = setInterval(() => {
+                dice1.textContent = Math.floor(Math.random() * 20) + 1;
+                if (rollType !== 'normal') {
+                    dice2.textContent = Math.floor(Math.random() * 20) + 1;
+                }
+                rollCount++;
+
+                if (rollCount >= 15) {
+                    clearInterval(rollInterval);
+
+                    // Final results
+                    const result1 = Math.floor(Math.random() * 20) + 1;
+                    const result2 = Math.floor(Math.random() * 20) + 1;
+
+                    dice1.classList.remove('rolling');
+                    dice1.textContent = result1;
+
+                    let finalResult;
+
+                    if (rollType === 'advantage') {
+                        dice2.classList.remove('rolling');
+                        dice2.textContent = result2;
+                        finalResult = Math.max(result1, result2);
+
+                        // Highlight the chosen die
+                        if (result1 >= result2) {
+                            dice1.style.opacity = '1';
+                            dice2.style.opacity = '0.4';
+                        } else {
+                            dice1.style.opacity = '0.4';
+                            dice2.style.opacity = '1';
+                        }
+
+                        currentRollData.dice1 = result1;
+                        currentRollData.dice2 = result2;
+
+                    } else if (rollType === 'disadvantage') {
+                        dice2.classList.remove('rolling');
+                        dice2.textContent = result2;
+                        finalResult = Math.min(result1, result2);
+
+                        // Highlight the chosen die
+                        if (result1 <= result2) {
+                            dice1.style.opacity = '1';
+                            dice2.style.opacity = '0.4';
+                        } else {
+                            dice1.style.opacity = '0.4';
+                            dice2.style.opacity = '1';
+                        }
+
+                        currentRollData.dice1 = result1;
+                        currentRollData.dice2 = result2;
+
+                    } else {
+                        finalResult = result1;
+                    }
+
+                    currentRollData.diceResult = finalResult;
+
+                    // Apply visual feedback to the winning die
+                    const winningDice = (rollType === 'advantage' && result2 > result1) ||
+                        (rollType === 'disadvantage' && result2 < result1) ? dice2 : dice1;
+
+                    if (finalResult === 20) {
+                        winningDice.classList.add('critical');
+                    } else if (finalResult === 1) {
+                        winningDice.classList.add('fumble');
+                    }
+
+                    showRollResult();
+                }
+            }, 100);
+        }
+
+        function showRollResult() {
+            const { mod, bonus, diceResult, name, rollType, dice1, dice2 } = currentRollData;
+            const total = diceResult + mod + bonus;
+            currentRollData.total = total;
+
+            let formula = '';
+
+            if (rollType === 'advantage') {
+                formula = `🍀 [${dice1}, ${dice2}] → <strong>${diceResult}</strong> (maior)`;
+            } else if (rollType === 'disadvantage') {
+                formula = `💀 [${dice1}, ${dice2}] → <strong>${diceResult}</strong> (menor)`;
+            } else {
+                formula = `🎲 ${diceResult}`;
+            }
+
+            if (mod !== 0) formula += ` ${mod >= 0 ? '+' : ''}${mod} (${name})`;
+            if (bonus !== 0) formula += ` ${bonus >= 0 ? '+' : ''}${bonus} (bônus)`;
+
+            document.getElementById('rollFormula').innerHTML = formula;
+            document.getElementById('rollTotal').textContent = `Total: ${total}`;
+            document.getElementById('rollResultBox').style.display = 'block';
             document.getElementById('confirmRollBtn').style.display = 'inline-flex';
 
-            currentRollData.diceResult = diceResult;
-            currentRollData.total = total;
+            if (diceResult === 20) {
+                document.getElementById('rollFormula').innerHTML += ' <strong style="color: var(--ki-green);">CRÍTICO!</strong>';
+            } else if (diceResult === 1) {
+                document.getElementById('rollFormula').innerHTML += ' <strong style="color: var(--danger);">FALHA CRÍTICA!</strong>';
+            }
         }
 
         function confirmRoll() {
-            if (currentRollData) {
-                rollHistory.add({
-                    name: currentRollData.name,
-                    diceResult: currentRollData.diceResult,
-                    mod: currentRollData.mod,
-                    total: currentRollData.total,
-                    isCritical: currentRollData.diceResult === 20,
-                    isFumble: currentRollData.diceResult === 1
-                });
+            if (!currentRollData) return;
 
-                updateRollHistoryDisplay();
+            const rollEntry = {
+                id: Date.now(),
+                name: currentRollData.name,
+                diceResult: currentRollData.diceResult,
+                mod: currentRollData.mod,
+                bonus: currentRollData.bonus,
+                total: currentRollData.total,
+                rollType: currentRollData.rollType,
+                isCritical: currentRollData.diceResult === 20,
+                isFumble: currentRollData.diceResult === 1,
+                timestamp: new Date().toISOString()
+            };
+
+            // Add both dice for advantage/disadvantage
+            if (currentRollData.dice1 !== undefined) {
+                rollEntry.dice1 = currentRollData.dice1;
+                rollEntry.dice2 = currentRollData.dice2;
             }
 
+            rollHistory.unshift(rollEntry);
+
+            if (rollHistory.length > 50) rollHistory.pop();
+            sessionStorage.setItem('rollHistory_' + sheetId, JSON.stringify(rollHistory));
+
+            updateRollHistoryDisplay();
             closeDiceModal();
         }
 
         function closeDiceModal() {
-            document.getElementById('dice3dModal').classList.remove('active');
+            document.getElementById('diceModal').classList.remove('active');
+            // Reset dice opacity
+            document.getElementById('diceDisplay1').style.opacity = '1';
+            document.getElementById('diceDisplay2').style.opacity = '1';
             currentRollData = null;
         }
 
@@ -853,45 +1190,56 @@
 
         function updateRollHistoryDisplay() {
             const list = document.getElementById('rollHistoryList');
-            const history = rollHistory.getAll();
-            const countEl = document.getElementById('rollCount');
 
-            if (history.length === 0) {
-                list.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">Nenhuma rolagem ainda</p>';
-                countEl.classList.add('hidden');
+            if (rollHistory.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 30px;">Nenhuma rolagem ainda</p>';
                 return;
             }
 
-            countEl.textContent = history.length;
-            countEl.classList.remove('hidden');
+            list.innerHTML = rollHistory.map(roll => {
+                let rollTypeIcon = '🎲';
+                let rollTypeLabel = '';
 
-            list.innerHTML = history.map(roll => `
-                <div class="roll-entry ${roll.isCritical ? 'critical' : ''} ${roll.isFumble ? 'fumble' : ''}">
-                    <div class="roll-entry-header">
-                        <span class="roll-entry-name">${roll.name}</span>
-                        <span class="roll-entry-result" style="color: ${roll.isCritical ? 'var(--ki-green)' : roll.isFumble ? 'var(--danger)' : 'var(--ssj-gold)'}">
-                            ${roll.total}
-                        </span>
+                if (roll.rollType === 'advantage') {
+                    rollTypeIcon = '🍀';
+                    rollTypeLabel = '<span style="color: var(--ki-green);">VANTAGEM</span>';
+                } else if (roll.rollType === 'disadvantage') {
+                    rollTypeIcon = '💀';
+                    rollTypeLabel = '<span style="color: var(--danger);">DESVANTAGEM</span>';
+                }
+
+                let diceInfo = `${rollTypeIcon} ${roll.diceResult}`;
+                if (roll.dice1 !== undefined) {
+                    diceInfo = `${rollTypeIcon} [${roll.dice1}, ${roll.dice2}] → ${roll.diceResult}`;
+                }
+
+                return `
+                    <div class="roll-entry ${roll.isCritical ? 'critical' : ''} ${roll.isFumble ? 'fumble' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <div>
+                                <span style="font-weight: 700; font-size: 1.05rem;">${roll.name}</span>
+                                ${rollTypeLabel ? `<br><span style="font-size: 0.75rem;">${rollTypeLabel}</span>` : ''}
+                            </div>
+                            <span style="font-family: 'Orbitron'; font-size: 1.4rem; font-weight: 900; color: ${roll.isCritical ? 'var(--ki-green)' : roll.isFumble ? 'var(--danger)' : 'var(--ssj-gold)'}">
+                                ${roll.total}
+                            </span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                            ${diceInfo} ${roll.mod >= 0 ? '+' : ''}${roll.mod} ${roll.bonus !== 0 ? (roll.bonus >= 0 ? '+' : '') + roll.bonus + ' bônus' : ''}
+                            ${roll.isCritical ? ' • ⭐ CRÍTICO!' : ''}
+                            ${roll.isFumble ? ' • 💀 FALHA!' : ''}
+                        </div>
                     </div>
-                    <div class="roll-entry-details">
-                        🎲 ${roll.diceResult} ${roll.mod >= 0 ? '+' : ''}${roll.mod} • ${formatTime(roll.timestamp)}
-                        ${roll.isCritical ? ' • ⭐ CRÍTICO!' : ''}
-                        ${roll.isFumble ? ' • 💀 FALHA!' : ''}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function clearRollHistory() {
             if (confirm('Limpar todo o histórico de rolagens?')) {
-                rollHistory.clear();
+                rollHistory = [];
+                sessionStorage.removeItem('rollHistory_' + sheetId);
                 updateRollHistoryDisplay();
             }
-        }
-
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
         // Auto-save
@@ -928,8 +1276,6 @@
                     indicator.classList.remove('saving');
                     indicator.classList.add('saved');
                     document.getElementById('saveStatus').textContent = 'Salvo';
-
-                    // Update sheet name in header
                     document.getElementById('sheetName').textContent = data.charName || 'Sem Nome';
                 }
             } catch (e) {
@@ -969,17 +1315,6 @@
             a.download = (data.charName || 'personagem') + '_ficha.json';
             a.click();
         }
-
-        // Clean up on page unload
-        window.addEventListener('beforeunload', async () => {
-            if (rollHistory && sheetId) {
-                // Archive rolls on page close
-                await fetch(`${API_URL}/api/sheets/${sheetId}/rolls`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-                }).catch(() => { });
-            }
-        });
 
         // Initialize
         init();

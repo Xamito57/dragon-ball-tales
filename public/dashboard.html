@@ -523,15 +523,31 @@
         }
 
         function applyPreferences(prefs) {
-            document.documentElement.style.setProperty('--user-text-color', prefs.fontColor);
-            document.documentElement.style.setProperty('--user-border-color', prefs.borderColor);
-            document.documentElement.style.setProperty('--user-bg-color', prefs.backgroundColor);
-            document.documentElement.style.setProperty('--user-font-size', prefs.fontSize + 'px');
+            const root = document.documentElement;
 
+            if (prefs.fontColor) {
+                root.style.setProperty('--user-text-color', prefs.fontColor);
+                root.style.setProperty('--text-primary', prefs.fontColor);
+                document.body.style.color = prefs.fontColor;
+            }
+            if (prefs.borderColor) {
+                root.style.setProperty('--user-border-color', prefs.borderColor);
+                root.style.setProperty('--primary', prefs.borderColor);
+            }
+            if (prefs.backgroundColor) {
+                root.style.setProperty('--user-bg-color', prefs.backgroundColor);
+                root.style.setProperty('--bg-dark', prefs.backgroundColor);
+                document.body.style.backgroundColor = prefs.backgroundColor;
+            }
+            if (prefs.fontSize) {
+                root.style.setProperty('--user-font-size', prefs.fontSize + 'px');
+                document.body.style.fontSize = prefs.fontSize + 'px';
+            }
             if (prefs.backgroundImage) {
                 document.body.style.backgroundImage = `url(${prefs.backgroundImage})`;
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundPosition = 'center';
             }
         }
 
