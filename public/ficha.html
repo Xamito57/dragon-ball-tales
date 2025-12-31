@@ -546,8 +546,6 @@
                 <button class="btn btn-lg" onclick="executeRoll('advantage')"
                     style="padding: 16px 30px; font-size: 1.1rem; background: var(--ki-green); border-color: var(--ki-green); color: #000;">
                     🍀 ROLAR COM VANTAGEM
-                    <span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 4px;">Rola 2d20, usa o
-                        MAIOR</span>
                 </button>
 
                 <button class="btn btn-primary btn-lg" onclick="executeRoll('normal')"
@@ -558,8 +556,6 @@
                 <button class="btn btn-lg" onclick="executeRoll('disadvantage')"
                     style="padding: 16px 30px; font-size: 1.1rem; background: var(--danger); border-color: var(--danger); color: #fff;">
                     💀 ROLAR COM DESVANTAGEM
-                    <span style="display: block; font-size: 0.75rem; opacity: 0.8; margin-top: 4px;">Rola 2d20, usa o
-                        MENOR</span>
                 </button>
             </div>
 
@@ -664,10 +660,27 @@
                 document.body.style.fontSize = prefs.fontSize + 'px';
             }
             if (prefs.backgroundImage) {
-                document.body.style.backgroundImage = `url(${prefs.backgroundImage})`;
-                document.body.style.backgroundSize = 'cover';
+                // Use smart positioning based on image type
+                const bgPath = prefs.backgroundImage;
+                document.body.style.backgroundImage = `url(${bgPath})`;
                 document.body.style.backgroundAttachment = 'fixed';
-                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundRepeat = 'no-repeat';
+
+                const isCharacter = bgPath.includes('android') || bgPath.includes('bulma') || bgPath.includes('chichi') ||
+                    bgPath.includes('videl') || bgPath.includes('launch') || bgPath.includes('caulifla') ||
+                    bgPath.includes('kale') || bgPath.includes('vados') || bgPath.includes('towa') ||
+                    bgPath.includes('majin') || bgPath.includes('saiyan') || bgPath.includes('goku') ||
+                    bgPath.includes('gohan') || bgPath.includes('trunks') || bgPath.includes('jiren') ||
+                    bgPath.includes('ssj') || bgPath.includes('namekian') || bgPath.includes('frieza') ||
+                    bgPath.includes('female') || bgPath.includes('fighter');
+
+                if (isCharacter) {
+                    document.body.style.backgroundSize = 'auto 95vh';
+                    document.body.style.backgroundPosition = 'center top';
+                } else {
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center center';
+                }
             }
         }
 
@@ -1316,7 +1329,90 @@
             a.click();
         }
 
+        // Preferences
+        async function loadPreferences() {
+            try {
+                const res = await fetch(`${API_URL}/api/user/preferences`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    applyPreferences(data.preferences);
+                }
+            } catch (e) {
+                console.error('Failed to load preferences:', e);
+            }
+        }
+
+        function applyPreferences(prefs) {
+            const root = document.documentElement;
+
+            if (prefs.fontColor) {
+                root.style.setProperty('--user-text-color', prefs.fontColor);
+                root.style.setProperty('--text-primary', prefs.fontColor);
+                document.body.style.color = prefs.fontColor;
+            }
+            if (prefs.borderColor) {
+                root.style.setProperty('--user-border-color', prefs.borderColor);
+                root.style.setProperty('--primary', prefs.borderColor);
+            }
+            if (prefs.fontSize) {
+                root.style.setProperty('--user-font-size', prefs.fontSize + 'px');
+                document.body.style.fontSize = prefs.fontSize + 'px';
+            }
+            if (prefs.backgroundImage) {
+                applyBackgroundWithSmartPosition(prefs.backgroundImage);
+            }
+        }
+
+        // Smart background positioning based on image type
+        function applyBackgroundWithSmartPosition(bgPath) {
+            if (!bgPath) {
+                document.body.style.backgroundImage = '';
+                return;
+            }
+
+            document.body.style.backgroundImage = `url(${bgPath})`;
+            document.body.style.backgroundAttachment = 'fixed';
+            document.body.style.backgroundRepeat = 'no-repeat';
+
+            // Character backgrounds: position to show character (top-center)
+            // Environment backgrounds: cover full area (center)
+            const isCharacter = bgPath.includes('android') ||
+                bgPath.includes('bulma') ||
+                bgPath.includes('chichi') ||
+                bgPath.includes('videl') ||
+                bgPath.includes('launch') ||
+                bgPath.includes('caulifla') ||
+                bgPath.includes('kale') ||
+                bgPath.includes('vados') ||
+                bgPath.includes('towa') ||
+                bgPath.includes('majin') ||
+                bgPath.includes('saiyan') ||
+                bgPath.includes('goku') ||
+                bgPath.includes('gohan') ||
+                bgPath.includes('trunks') ||
+                bgPath.includes('jiren') ||
+                bgPath.includes('ssj') ||
+                bgPath.includes('namekian') ||
+                bgPath.includes('frieza') ||
+                bgPath.includes('female') ||
+                bgPath.includes('fighter');
+
+            if (isCharacter) {
+                // Character: show from top, contain to see full character
+                document.body.style.backgroundSize = 'auto 95vh';
+                document.body.style.backgroundPosition = 'center top';
+            } else {
+                // Environment: cover full screen
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center center';
+            }
+        }
+
         // Initialize
+        checkAuth();
+        loadPreferences();
         init();
     </script>
 </body>

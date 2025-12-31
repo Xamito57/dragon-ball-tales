@@ -345,14 +345,6 @@
                         <input type="text" id="borderColorText" value="#ff6b00" maxlength="7">
                     </div>
                 </div>
-
-                <div class="color-picker-item">
-                    <label>Cor de Fundo</label>
-                    <div class="color-input-wrapper">
-                        <input type="color" id="bgColor" value="#050508">
-                        <input type="text" id="bgColorText" value="#050508" maxlength="7">
-                    </div>
-                </div>
             </div>
 
             <div style="margin-top: 25px;">
@@ -366,20 +358,178 @@
                 </div>
             </div>
 
-            <div class="bg-upload-area" onclick="document.getElementById('bgUpload').click()">
-                <input type="file" id="bgUpload" accept="image/*" style="display: none;"
-                    onchange="uploadBackground(event)">
-                <div style="font-size: 2rem; margin-bottom: 10px;">📷</div>
-                <div>Clique para fazer upload de uma imagem de fundo</div>
-                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Máximo: 10MB | Formatos:
-                    JPG, PNG, GIF, WebP</div>
-                <img id="bgPreview" class="bg-preview hidden" alt="Preview">
+            <!-- Background Gallery -->
+            <div style="margin-top: 30px;">
+                <label
+                    style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px; display: block;">🖼️
+                    Plano de Fundo - Dragon Ball Tales</label>
+                <label
+                    style="color: var(--ssj-gold); font-size: 0.85rem; margin-bottom: 10px; display: block; margin-top: 20px;">�
+                    Personagens Femininas</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px;">
+                    <div class="bg-option" data-bg="/backgrounds/bg_android18_v5_1767134655735.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_android18_v5_1767134655735.png">
+                        <div>Android 18</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_bulma_scientist_1767170055603.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_bulma_scientist_1767170055603.png">
+                        <div>Bulma</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_chichi_fighter_1767170073799.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_chichi_fighter_1767170073799.png">
+                        <div>Chi-Chi</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_videl_athletic_1767170089100.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_videl_athletic_1767170089100.png">
+                        <div>Videl</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_launch_blonde_1767170106600.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_launch_blonde_1767170106600.png">
+                        <div>Launch</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_caulifla_saiyan_1767170121041.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_caulifla_saiyan_1767170121041.png">
+                        <div>Caulifla</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_kale_saiyan_1767170135435.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_kale_saiyan_1767170135435.png">
+                        <div>Kale</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_vados_angel_v3_1767170342889.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_vados_angel_v3_1767170342889.png">
+                        <div>Vados</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_vados_dress_1767170436074.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_vados_dress_1767170436074.png">
+                        <div>Vados (Vestido)</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_towa_demon_v2_1767170235210.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_towa_demon_v2_1767170235210.png">
+                        <div>Towa</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_majin_female_1767133513155.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_majin_female_1767133513155.png">
+                        <div>Majin</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_saiyan_female_1767133483592.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_saiyan_female_1767133483592.png">
+                        <div>Saiyajin</div>
+                    </div>
+                </div>
+
+                <label
+                    style="color: var(--ssj-gold); font-size: 0.85rem; margin-bottom: 10px; display: block; margin-top: 20px;">👨
+                    Personagens Masculinos</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px;">
+                    <div class="bg-option" data-bg="/backgrounds/bg_goku_ssj3_1767170562978.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_goku_ssj3_1767170562978.png">
+                        <div>Goku SSJ3</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_goku_ultra_instinct_1767170599792.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_goku_ultra_instinct_1767170599792.png">
+                        <div>Goku UI</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_gohan_ultimate_1767170637243.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_gohan_ultimate_1767170637243.png">
+                        <div>Gohan</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_trunks_future_1767170655354.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_trunks_future_1767170655354.png">
+                        <div>Trunks</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_jiren_pride_1767170583342.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_jiren_pride_1767170583342.png">
+                        <div>Jiren</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_saiyan_male_1767132345478.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_saiyan_male_1767132345478.png">
+                        <div>Saiyajin</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_ssj_blue_1767133497572.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_ssj_blue_1767133497572.png">
+                        <div>SSJ Blue</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_namekian_warrior_1767133439949.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_namekian_warrior_1767133439949.png">
+                        <div>Namekuseijin</div>
+                    </div>
+                    <div class="bg-option" data-bg="/backgrounds/bg_frieza_race_1767133469257.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_frieza_race_1767133469257.png">
+                        <div>Raça Freeza</div>
+                    </div>
+                </div>
+
+                <label
+                    style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 10px; display: block; margin-top: 20px;">🌍
+                    Ambientes</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;">
+                    <div class="bg-option" data-bg="" onclick="selectBackground(this)"
+                        style="background: linear-gradient(135deg, #0a0a0f, #1a1a2e); display: flex; align-items: center; justify-content: center;">
+                        <span style="font-size: 2rem;">🚫</span>
+                    </div>
+
+                    <div class="bg-option" data-bg="/backgrounds/bg_kame_house_1767132303065.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_kame_house_1767132303065.png">
+                        <div>Kame House</div>
+                    </div>
+
+                    <div class="bg-option" data-bg="/backgrounds/bg_namek_1767132317651.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_namek_1767132317651.png">
+                        <div>Namek</div>
+                    </div>
+
+                    <div class="bg-option" data-bg="/backgrounds/bg_tournament_1767132331299.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_tournament_1767132331299.png">
+                        <div>Torneio</div>
+                    </div>
+
+                    <div class="bg-option" data-bg="/backgrounds/bg_capsule_corp_1767132390466.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_capsule_corp_1767132390466.png">
+                        <div>Capsule Corp</div>
+                    </div>
+
+                    <div class="bg-option" data-bg="/backgrounds/bg_time_chamber_1767132404943.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_time_chamber_1767132404943.png">
+                        <div>Câmara Tempo</div>
+                    </div>
+
+                    <div class="bg-option" data-bg="/backgrounds/bg_wasteland_1767132374194.png"
+                        onclick="selectBackground(this)">
+                        <img src="/backgrounds/bg_wasteland_1767132374194.png">
+                        <div>Deserto</div>
+                    </div>
+                </div>
             </div>
 
             <div style="display: flex; gap: 15px; margin-top: 25px;">
                 <button class="btn btn-primary" onclick="savePreferences()">💾 Salvar Preferências</button>
                 <button class="btn btn-secondary" onclick="resetPreferences()">🔄 Restaurar Padrões</button>
-                <button class="btn" onclick="removeBackground()">🗑️ Remover Fundo</button>
             </div>
         </div>
 
@@ -507,14 +657,20 @@
                     document.getElementById('fontColorText').value = prefs.fontColor || '#f0f0f5';
                     document.getElementById('borderColor').value = prefs.borderColor || '#ff6b00';
                     document.getElementById('borderColorText').value = prefs.borderColor || '#ff6b00';
-                    document.getElementById('bgColor').value = prefs.backgroundColor || '#050508';
-                    document.getElementById('bgColorText').value = prefs.backgroundColor || '#050508';
                     document.getElementById('fontSize').value = prefs.fontSize || 16;
                     document.getElementById('fontSizeValue').textContent = (prefs.fontSize || 16) + 'px';
 
+                    // Select correct background in gallery
                     if (prefs.backgroundImage) {
-                        document.getElementById('bgPreview').src = prefs.backgroundImage;
-                        document.getElementById('bgPreview').classList.remove('hidden');
+                        selectedBackground = prefs.backgroundImage;
+                        document.querySelectorAll('.bg-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                            opt.style.borderColor = 'var(--border-color)';
+                            if (opt.dataset.bg === prefs.backgroundImage) {
+                                opt.classList.add('selected');
+                                opt.style.borderColor = 'var(--primary)';
+                            }
+                        });
                     }
                 }
             } catch (e) {
@@ -533,11 +689,6 @@
             if (prefs.borderColor) {
                 root.style.setProperty('--user-border-color', prefs.borderColor);
                 root.style.setProperty('--primary', prefs.borderColor);
-            }
-            if (prefs.backgroundColor) {
-                root.style.setProperty('--user-bg-color', prefs.backgroundColor);
-                root.style.setProperty('--bg-dark', prefs.backgroundColor);
-                document.body.style.backgroundColor = prefs.backgroundColor;
             }
             if (prefs.fontSize) {
                 root.style.setProperty('--user-font-size', prefs.fontSize + 'px');
@@ -709,6 +860,66 @@
             document.getElementById('fontSizeValue').textContent = e.target.value + 'px';
         });
 
+        let selectedBackground = '';
+
+        function selectBackground(element) {
+            document.querySelectorAll('.bg-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.style.borderColor = 'var(--border-color)';
+            });
+            element.classList.add('selected');
+            element.style.borderColor = 'var(--primary)';
+            selectedBackground = element.dataset.bg;
+
+            // Preview immediately with smart positioning
+            applyBackgroundWithSmartPosition(selectedBackground);
+        }
+
+        // Smart background positioning based on image type
+        function applyBackgroundWithSmartPosition(bgPath) {
+            if (!bgPath) {
+                document.body.style.backgroundImage = '';
+                return;
+            }
+
+            document.body.style.backgroundImage = `url(${bgPath})`;
+            document.body.style.backgroundAttachment = 'fixed';
+            document.body.style.backgroundRepeat = 'no-repeat';
+
+            // Character backgrounds: position to show character (top-center)
+            // Environment backgrounds: cover full area (center)
+            const isCharacter = bgPath.includes('android') ||
+                bgPath.includes('bulma') ||
+                bgPath.includes('chichi') ||
+                bgPath.includes('videl') ||
+                bgPath.includes('launch') ||
+                bgPath.includes('caulifla') ||
+                bgPath.includes('kale') ||
+                bgPath.includes('vados') ||
+                bgPath.includes('towa') ||
+                bgPath.includes('majin') ||
+                bgPath.includes('saiyan') ||
+                bgPath.includes('goku') ||
+                bgPath.includes('gohan') ||
+                bgPath.includes('trunks') ||
+                bgPath.includes('jiren') ||
+                bgPath.includes('ssj') ||
+                bgPath.includes('namekian') ||
+                bgPath.includes('frieza') ||
+                bgPath.includes('female') ||
+                bgPath.includes('fighter');
+
+            if (isCharacter) {
+                // Character: show from top, contain to see full character
+                document.body.style.backgroundSize = 'auto 95vh';
+                document.body.style.backgroundPosition = 'center top';
+            } else {
+                // Environment: cover full screen
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center center';
+            }
+        }
+
         async function savePreferences() {
             try {
                 const res = await fetch(`${API_URL}/api/user/preferences`, {
@@ -721,7 +932,7 @@
                         fontSize: parseInt(document.getElementById('fontSize').value),
                         fontColor: document.getElementById('fontColor').value,
                         borderColor: document.getElementById('borderColor').value,
-                        backgroundColor: document.getElementById('bgColor').value
+                        backgroundImage: selectedBackground
                     })
                 });
 
@@ -738,69 +949,23 @@
             }
         }
 
-        async function uploadBackground(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.size > 10 * 1024 * 1024) {
-                alert('⚠️ Imagem muito grande! Máximo: 10MB');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('background', file);
-
-            try {
-                const res = await fetch(`${API_URL}/api/user/background`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
-                    body: formData
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    document.getElementById('bgPreview').src = data.backgroundImage;
-                    document.getElementById('bgPreview').classList.remove('hidden');
-                    document.body.style.backgroundImage = `url(${data.backgroundImage})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundAttachment = 'fixed';
-                    alert('✅ Imagem de fundo atualizada!');
-                } else {
-                    alert('Erro ao fazer upload');
-                }
-            } catch (e) {
-                console.error('Upload failed:', e);
-                alert('Erro ao fazer upload');
-            }
-        }
-
-        async function removeBackground() {
-            try {
-                const res = await fetch(`${API_URL}/api/user/background`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-                });
-
-                if (res.ok) {
-                    document.getElementById('bgPreview').src = '';
-                    document.getElementById('bgPreview').classList.add('hidden');
-                    document.body.style.backgroundImage = '';
-                    alert('✅ Imagem de fundo removida!');
-                }
-            } catch (e) {
-                console.error('Remove failed:', e);
-            }
-        }
-
         function resetPreferences() {
             document.getElementById('fontColor').value = '#f0f0f5';
             document.getElementById('fontColorText').value = '#f0f0f5';
             document.getElementById('borderColor').value = '#ff6b00';
             document.getElementById('borderColorText').value = '#ff6b00';
-            document.getElementById('bgColor').value = '#050508';
-            document.getElementById('bgColorText').value = '#050508';
             document.getElementById('fontSize').value = 16;
             document.getElementById('fontSizeValue').textContent = '16px';
+
+            // Reset background selection
+            selectedBackground = '';
+            document.querySelectorAll('.bg-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.style.borderColor = 'var(--border-color)';
+            });
+            document.querySelector('.bg-option[data-bg=""]').classList.add('selected');
+            document.querySelector('.bg-option[data-bg=""]').style.borderColor = 'var(--primary)';
+            document.body.style.backgroundImage = '';
         }
 
         function logout() {
